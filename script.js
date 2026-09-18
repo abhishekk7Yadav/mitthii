@@ -1168,7 +1168,6 @@ function transitionRoomStatusCardToCakeCard() {
   setTimeout(function () {
     statusCard.style.display = 'none';
     cakeCard.classList.add('isVisible');
-    scheduleMicrophoneBlowDetection();
   }, 400);
 }
 
@@ -1267,192 +1266,18 @@ function spawnCandleSmoke() {
 }
 
 /* ============================================================
-   FEATURE: Microphone blow detection for the birthday candle
-   ------------------------------------------------------------
-   Gives a calm 3.2s "Make a wish first" grace period, then listens
-   specifically for breath wind turbulence without false-triggering
-   on room noise. Safe fallback button is always active.
+   Birthday candle blow handler (tap button or candle to blow)
    ============================================================ */
-let micStream = null;
-let micAudioContext = null;
-let micAnalyserNode = null;
-let micBlowAnimFrameId = null;
-let blowDetectionArmTimeoutId = null;
-let isBlowDetectionArmed = false;
-let consecutiveBlowFrames = 0;
-let ambientNoiseCalibrationFrames = 0;
-let ambientNoiseFloor = 40;
-
-function scheduleMicrophoneBlowDetection() {
-  stopMicrophoneBlowDetection();
-
-  const micHint = document.getElementById('candleBlowMicHint');
-  if (micHint) {
-    micHint.innerHTML = '✨ Make a wish first... 🎂';
-    micHint.style.opacity = '1';
-    micHint.style.transform = 'scale(1)';
-  }
-
-  // Grace period: let her admire the cake and make a wish for 3.2 seconds
-  blowDetectionArmTimeoutId = setTimeout(function () {
-    if (micHint) {
-      micHint.innerHTML = '💨 Blow on your mic or tap below to make a wish! ✨';
-    }
-    isBlowDetectionArmed = true;
-    startMicrophoneBlowDetection();
-  }, 3200);
-}
-
-function startMicrophoneBlowDetection() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-  const cakeAssembly = document.getElementById('cakeAssembly');
-  if (!cakeAssembly || cakeAssembly.classList.contains('isCandleBlownOut')) return;
-
-  // Don't duplicate if already running
-  if (micStream || micBlowAnimFrameId) return;
-
-  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-    .then(function (stream) {
-      const cakeAssemblyNow = document.getElementById('cakeAssembly');
-      if (!cakeAssemblyNow || cakeAssemblyNow.classList.contains('isCandleBlownOut')) {
-        stream.getTracks().forEach(function (t) { t.stop(); });
-        return;
-      }
-      micStream = stream;
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return;
-      micAudioContext = new AudioContextClass();
-      if (micAudioContext.state === 'suspended') {
-        micAudioContext.resume().catch(function () { });
-      }
-
-      const source = micAudioContext.createMediaStreamSource(stream);
-      micAnalyserNode = micAudioContext.createAnalyser();
-      micAnalyserNode.fftSize = 512;
-      micAnalyserNode.smoothingTimeConstant = 0.25;
-      source.connect(micAnalyserNode);
-
-      const bufferLength = micAnalyserNode.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      ambientNoiseCalibrationFrames = 0;
-      ambientNoiseFloor = 40;
-      consecutiveBlowFrames = 0;
-
-      function detectBlowLoop() {
-        if (!micAnalyserNode) return;
-
-        if (!isBlowDetectionArmed) {
-          micBlowAnimFrameId = requestAnimationFrame(detectBlowLoop);
-          return;
-        }
-
-        micAnalyserNode.getByteFrequencyData(dataArray);
-
-        // Skip bins 0 and 1 (DC offset / static hum).
-        // Wind turbulence from blowing into mic capsule concentrates in bins 2-11 (approx 170Hz - 950Hz)
-        let lowFreqSum = 0;
-        const lowStart = 2;
-        const lowEnd = 11;
-        for (let i = lowStart; i <= lowEnd; i++) {
-          lowFreqSum += dataArray[i];
-        }
-        const lowFreqAvg = lowFreqSum / (lowEnd - lowStart + 1);
-
-        // High frequency energy (speech, music, clapping) in bins 25-120
-        let highFreqSum = 0;
-        const highStart = 25;
-        const highEnd = 120;
-        for (let i = highStart; i <= highEnd; i++) {
-          highFreqSum += dataArray[i];
-        }
-        const highFreqAvg = highFreqSum / (highEnd - highStart + 1);
-
-        // Calibrate ambient noise floor for the first 25 frames (~400ms)
-        if (ambientNoiseCalibrationFrames < 25) {
-          ambientNoiseCalibrationFrames++;
-          ambientNoiseFloor = Math.max(ambientNoiseFloor, lowFreqAvg);
-          micBlowAnimFrameId = requestAnimationFrame(detectBlowLoop);
-          return;
-        }
-
-        const flame = document.getElementById('birthdayCandleFlame');
-
-        // Check if there is deliberate blowing:
-        // 1. Low frequency turbulence must be high (>= 125)
-        // 2. Must exceed calibrated room background by at least 45
-        // 3. Must have low-to-high ratio > 2.0 (breath turbulence vs speaking/room noise)
-        const isBlowingWind = (lowFreqAvg >= 125) &&
-          (lowFreqAvg >= ambientNoiseFloor + 45) &&
-          (lowFreqAvg > highFreqAvg * 2.0);
-
-        if (isBlowingWind) {
-          if (flame) flame.classList.add('isMicFlickering');
-          consecutiveBlowFrames++;
-          // Require at least 14 consecutive frames (~230ms of deliberate blowing)
-          if (consecutiveBlowFrames >= 14) {
-            handleBlowCandleClick();
-            return;
-          }
-        } else {
-          // If light puffing (>= 85 and above floor), show gentle flame flicker without blowing out
-          if (lowFreqAvg >= 85 && lowFreqAvg >= ambientNoiseFloor + 25) {
-            if (flame) flame.classList.add('isMicFlickering');
-          } else {
-            if (flame) flame.classList.remove('isMicFlickering');
-          }
-          if (consecutiveBlowFrames > 0) consecutiveBlowFrames -= 2;
-          if (consecutiveBlowFrames < 0) consecutiveBlowFrames = 0;
-        }
-
-        micBlowAnimFrameId = requestAnimationFrame(detectBlowLoop);
-      }
-
-      micBlowAnimFrameId = requestAnimationFrame(detectBlowLoop);
-    })
-    .catch(function () {
-      // Mic access denied or not available; fallback button is already visible and works 100%
-    });
-}
-
-function stopMicrophoneBlowDetection() {
-  if (blowDetectionArmTimeoutId) {
-    clearTimeout(blowDetectionArmTimeoutId);
-    blowDetectionArmTimeoutId = null;
-  }
-  isBlowDetectionArmed = false;
-  if (micBlowAnimFrameId) {
-    cancelAnimationFrame(micBlowAnimFrameId);
-    micBlowAnimFrameId = null;
-  }
-  if (micAnalyserNode) {
-    micAnalyserNode = null;
-  }
-  if (micStream) {
-    micStream.getTracks().forEach(function (track) { track.stop(); });
-    micStream = null;
-  }
-  if (micAudioContext) {
-    micAudioContext.close().catch(function () { });
-    micAudioContext = null;
-  }
-  consecutiveBlowFrames = 0;
-  const flame = document.getElementById('birthdayCandleFlame');
-  if (flame) flame.classList.remove('isMicFlickering');
-}
-
 function handleBlowCandleClick() {
   const cakeAssembly = document.getElementById('cakeAssembly');
   const blowButton = document.getElementById('blowCandleButton');
   if (cakeAssembly.classList.contains('isCandleBlownOut')) return;
 
-  // Release microphone and cancel any pending arming immediately
-  stopMicrophoneBlowDetection();
-
   // Restore ambient lighting for celebration
   const roomDeco = document.getElementById('sceneRoomDecoration');
   if (roomDeco) roomDeco.classList.remove('isLightsDimmed');
 
-  // Fade out mic hint
+  // Fade out candle hint
   const micHint = document.getElementById('candleBlowMicHint');
   if (micHint) {
     micHint.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -1768,9 +1593,6 @@ function handleReplayClick() {
   cakeCard.style.opacity = '';
   cakeCard.style.transform = '';
   cakeCard.classList.add('isVisible');
-
-  // Re-enable microphone blow detection with grace period
-  scheduleMicrophoneBlowDetection();
 }
 
 /* ============================================================
