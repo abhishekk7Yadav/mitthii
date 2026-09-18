@@ -1817,3 +1817,22 @@ body {
   92% { opacity: 0.45; }
   100% { transform: translate3d(var(--driftX), 116vh, 0) rotate(320deg); opacity: 0; }
 }
+
+/* ================================================================
+   Hide Netlify Drawer, Badge, or Injected Feedback Widget
+   ================================================================ */
+netlify-drawer,
+netlify-feedback,
+#netlify-drawer,
+.netlify-badge,
+a[href*="netlify.com"],
+div[class*="netlify"],
+iframe[src*="netlify"],
+[data-netlify-deploy-id] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
