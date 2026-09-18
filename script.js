@@ -292,41 +292,19 @@ function initializePhotoStripZoomPreview() {
   const zoomImg = zoomPreview.querySelector('.polaroidZoomImg');
   const zoomChin = zoomPreview.querySelector('#polaroidZoomChin');
 
-  let currentSourceCard = null;
-
-  function getEnlargedPreviewDims() {
-    if (window.innerWidth <= 480) return { width: 230, height: 285 };
-    if (window.innerWidth <= 768) return { width: 210, height: 260 };
-    return { width: 240, height: 300 };
-  }
-
-  function setPreviewRect(left, top, width, height, opacity, withTransition) {
-    zoomPreview.style.transitionProperty = withTransition
-      ? 'left, top, width, height, opacity'
-      : 'none';
-    zoomPreview.style.left = left + 'px';
-    zoomPreview.style.top = top + 'px';
-    zoomPreview.style.width = width + 'px';
-    zoomPreview.style.height = height + 'px';
-    zoomPreview.style.opacity = opacity;
-  }
-
   function dismissPreview(event) {
-    if (event && event.stopPropagation) {
-      event.stopPropagation();
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
     }
-    zoomPreview.classList.remove('isVisible');
     backdrop.classList.remove('isVisible');
-    zoomPreview.style.pointerEvents = 'none';
-    backdrop.style.pointerEvents = 'none';
-    currentSourceCard = null;
+    zoomPreview.classList.remove('isVisible');
   }
 
-  // Dismiss on clicking backdrop
+  // Dismiss on clicking or tapping backdrop
   backdrop.addEventListener('click', dismissPreview);
   backdrop.addEventListener('touchend', dismissPreview);
 
-  // Dismiss on clicking/tapping the preview card or close button
+  // Dismiss on clicking or tapping anywhere on the preview card
   zoomPreview.addEventListener('click', dismissPreview);
   zoomPreview.addEventListener('touchend', dismissPreview);
 
@@ -336,7 +314,6 @@ function initializePhotoStripZoomPreview() {
   });
 
   function openEnlargedCard(card) {
-    currentSourceCard = card;
     const img = card.querySelector('img');
     if (!img) return;
 
@@ -344,26 +321,8 @@ function initializePhotoStripZoomPreview() {
     const caption = card.dataset.caption || 'Mitthi 💖';
     zoomChin.textContent = caption;
 
-    const isMobile = window.innerWidth <= 680;
-    const dims = getEnlargedPreviewDims();
-
-    if (isMobile) {
-      // Centered romantic modal on mobile screen
-      const left = Math.round((window.innerWidth - dims.width) / 2);
-      const top = Math.round((window.innerHeight - dims.height) / 2);
-      setPreviewRect(left, top, dims.width, dims.height, 1, true);
-    } else {
-      const sourceBounds = card.getBoundingClientRect();
-      const isLeftStrip = (sourceBounds.left + sourceBounds.width / 2) < (window.innerWidth / 2);
-      let previewLeft = isLeftStrip ? (sourceBounds.right + 14) : (sourceBounds.left - dims.width - 14);
-      let previewTop = Math.max(12, Math.min(sourceBounds.top, window.innerHeight - dims.height - 12));
-      setPreviewRect(previewLeft, previewTop, dims.width, dims.height, 1, true);
-    }
-
     backdrop.classList.add('isVisible');
-    backdrop.style.pointerEvents = 'auto';
     zoomPreview.classList.add('isVisible');
-    zoomPreview.style.pointerEvents = 'auto';
   }
 
   document.querySelectorAll('.photoStripTrack').forEach(function (trackElement) {
