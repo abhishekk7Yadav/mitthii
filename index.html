@@ -100,21 +100,30 @@
           🕯️💕</button>
       </div>
 
-      <div class="roomOverlayCard paperCard" id="finalMessageCard">
-        <div class="washiTapeAccent"></div>
-
-        <!-- vintage postmark & postage stamp -->
-        <div class="vintageLetterPostmark">
-          <div class="vintagePostageStamp">
-            <span class="vintageStampIcon">🌹</span>
-            <span class="vintageStampValue">21¢</span>
+      <!-- SCENE 3.5: Vintage Letter Envelope (Appears closed, then animates open on tap) -->
+      <div class="vintageEnvelopeContainer roomOverlayCard" id="vintageEnvelopeContainer" onclick="handleEnvelopeOpenClick()">
+        <div class="envelopeWrap">
+          <div class="envelopeFlap" id="envelopeFlap">
+            <div class="envelopeSealHeart">💌</div>
           </div>
-          <div class="vintagePostmarkCircle">
-            <span class="postmarkText">AIR MAIL</span>
-            <span class="postmarkDate">21·09·2006</span>
-            <span class="postmarkCity">FOR MITTHI</span>
+          <div class="envelopeLetterPeek" id="envelopeLetterPeek">
+            <div class="envelopeLetterPeekLines">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="envelopePocket"></div>
+          <div class="envelopeFrontFace">
+            <div class="envelopeAddressLabel">
+              <span class="envelopeToText">To: Meri Mitthi 💖</span>
+              <span class="envelopeFromText">with love, Abhishek 💕</span>
+            </div>
+            <div class="envelopeTapPrompt">tap to open your letter 💌✨</div>
           </div>
         </div>
+      </div>
+
+      <div class="roomOverlayCard paperCard" id="finalMessageCard">
+        <div class="washiTapeAccent"></div>
 
         <h2 class="vintageLetterTitle">Happy Birthday bachhuu 🎂💖</h2>
         <div class="daysCounterBadge" id="daysCounterBadge">

@@ -1240,7 +1240,7 @@ function handleBlowCandleClick() {
 
 function transitionCakeCardToFinalMessage() {
   const cakeCard = document.getElementById('birthdayCakeCard');
-  const messageCard = document.getElementById('finalMessageCard');
+  const envelopeContainer = document.getElementById('vintageEnvelopeContainer');
 
   cakeCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
   cakeCard.style.opacity = '0';
@@ -1249,10 +1249,60 @@ function transitionCakeCardToFinalMessage() {
   setTimeout(function () {
     cakeCard.classList.remove('isVisible');
     cakeCard.style.display = 'none';
-    messageCard.style.display = '';
-    messageCard.classList.add('isVisible');
-    beginFinalMessageSequence();
+
+    if (envelopeContainer) {
+      envelopeContainer.style.display = 'block';
+      // Force layout reflow so fade/scale transition triggers cleanly
+      void envelopeContainer.offsetWidth;
+      envelopeContainer.classList.add('isVisible');
+    } else {
+      const messageCard = document.getElementById('finalMessageCard');
+      if (messageCard) {
+        messageCard.style.display = '';
+        messageCard.classList.add('isVisible');
+        beginFinalMessageSequence();
+      }
+    }
   }, 500);
+}
+
+let isEnvelopeOpening = false;
+
+function handleEnvelopeOpenClick() {
+  if (isEnvelopeOpening) return;
+  isEnvelopeOpening = true;
+
+  const envelopeContainer = document.getElementById('vintageEnvelopeContainer');
+  const messageCard = document.getElementById('finalMessageCard');
+  if (!envelopeContainer) return;
+
+  // 1. Confetti burst on opening the love letter envelope
+  if (window.confetti) {
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.5 }
+    });
+  }
+
+  // 2. Open flap & slide peek paper up
+  envelopeContainer.classList.add('isOpen');
+
+  // 3. After flap and paper animate, smoothly depart envelope and transition into full love letter
+  setTimeout(function () {
+    envelopeContainer.classList.add('isDeparting');
+
+    setTimeout(function () {
+      envelopeContainer.classList.remove('isVisible');
+      envelopeContainer.style.display = 'none';
+
+      if (messageCard) {
+        messageCard.style.display = '';
+        messageCard.classList.add('isVisible');
+        beginFinalMessageSequence();
+      }
+    }, 450);
+  }, 850);
 }
 
 /* ============================================================
@@ -1499,6 +1549,13 @@ function handleReplayClick() {
   messageCard.classList.remove('isVisible');
   document.getElementById('birthdayMessageTextContainer').innerHTML = '';
   document.getElementById('signatureLine').classList.remove('isVisible');
+
+  const envelopeContainer = document.getElementById('vintageEnvelopeContainer');
+  if (envelopeContainer) {
+    envelopeContainer.classList.remove('isVisible', 'isOpen', 'isDeparting');
+    envelopeContainer.style.display = 'none';
+  }
+  isEnvelopeOpening = false;
 
   const micHint = document.getElementById('candleBlowMicHint');
   if (micHint) {

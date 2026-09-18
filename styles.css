@@ -1408,8 +1408,203 @@ body {
 }
 
 /* ================================================================
-   SCENE 5 — final message
+   SCENE 3.5 — Vintage Love Letter Envelope (Closed -> Animate Open)
    ================================================================ */
+.vintageEnvelopeContainer {
+  position: relative;
+  z-index: 6;
+  width: 330px;
+  max-width: 90%;
+  margin: auto;
+  cursor: pointer;
+  perspective: 1000px;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.34, 1.56, .64, 1);
+  display: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.vintageEnvelopeContainer.isVisible {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.envelopeWrap {
+  position: relative;
+  width: 100%;
+  height: 215px;
+  background: #FDF3E7;
+  border: 2px solid #3A2B20;
+  border-radius: 8px;
+  box-shadow: 6px 8px 0 rgba(75, 35, 45, 0.18), 0 14px 34px rgba(0, 0, 0, 0.12);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.vintageEnvelopeContainer:hover .envelopeWrap {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 8px 12px 0 rgba(75, 35, 45, 0.22), 0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+/* The triangular top flap */
+.envelopeFlap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  background: #F7E4CE;
+  border-bottom: 2px solid #3A2B20;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.65s cubic-bezier(.4, 0, .2, 1);
+  z-index: 5;
+  backface-visibility: hidden;
+}
+
+/* Cute heart seal sticker on the flap point */
+.envelopeSealHeart {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 38px;
+  background: radial-gradient(circle at 35% 35%, #FF7E98, #E63956);
+  border: 2px solid #3A2B20;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 3px 6px rgba(90, 20, 35, 0.28);
+  transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1);
+}
+.vintageEnvelopeContainer:hover .envelopeSealHeart {
+  transform: translateX(-50%) scale(1.12);
+}
+
+/* Folded letter paper inside the envelope that slides up */
+.envelopeLetterPeek {
+  position: absolute;
+  left: 5%;
+  top: 15px;
+  width: 90%;
+  height: 180px;
+  background: #FFFDF9;
+  border: 1.5px solid #3A2B20;
+  border-radius: 4px;
+  box-shadow: inset 0 0 14px rgba(210, 180, 140, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+  transition: transform 0.7s cubic-bezier(.25, 1, .5, 1);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.envelopeLetterPeekLines {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.envelopeLetterPeekLines span {
+  display: block;
+  height: 2px;
+  background: rgba(58, 43, 32, 0.18);
+  border-radius: 2px;
+}
+.envelopeLetterPeekLines span:nth-child(1) { width: 50%; }
+.envelopeLetterPeekLines span:nth-child(2) { width: 85%; }
+.envelopeLetterPeekLines span:nth-child(3) { width: 70%; }
+
+/* The pocket of the envelope covering the bottom */
+.envelopePocket {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, #F9EAD9 0%, #F3D9BE 100%);
+  border-top: 1.5px solid #3A2B20;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Front face address label */
+.envelopeFrontFace {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86%;
+  text-align: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.envelopeAddressLabel {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px dashed rgba(58, 43, 32, 0.35);
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.envelopeToText {
+  display: block;
+  font-family: 'Caveat', cursive;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #3A2B20;
+  line-height: 1.1;
+}
+.envelopeFromText {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8C4E5A;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+.envelopeTapPrompt {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, #FF7E98, #E63956);
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #3A2B20;
+  box-shadow: 0 2px 4px rgba(70, 20, 30, 0.2);
+  animation: envelopePromptPulse 1.8s ease-in-out infinite alternate;
+}
+@keyframes envelopePromptPulse {
+  0% { transform: scale(0.96); box-shadow: 0 2px 4px rgba(70, 20, 30, 0.2); }
+  100% { transform: scale(1.05); box-shadow: 0 4px 10px rgba(230, 57, 86, 0.4); }
+}
+
+/* OPENING ANIMATION STATE */
+.vintageEnvelopeContainer.isOpen .envelopeFlap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+.vintageEnvelopeContainer.isOpen .envelopeLetterPeek {
+  transform: translateY(-90px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+.vintageEnvelopeContainer.isDeparting {
+  opacity: 0;
+  transform: scale(1.08) translateY(-16px);
+  pointer-events: none;
+}
+
 /* ================================================================
    SCENE 5 — Vintage Parchment Love Letter
    ================================================================ */
@@ -2261,6 +2456,51 @@ body {
     margin-top: 4px;
   }
 
+  /* 7.5. Vintage Love Letter Envelope on mobile */
+  .vintageEnvelopeContainer {
+    width: calc(100% - 98px) !important;
+    max-width: 290px !important;
+    margin-top: 24px !important;
+    margin-bottom: auto !important;
+    z-index: 6 !important;
+  }
+
+  .envelopeWrap {
+    height: 180px;
+  }
+
+  .envelopeFlap {
+    height: 90px;
+  }
+
+  .envelopeSealHeart {
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+
+  .envelopeLetterPeek {
+    height: 150px;
+  }
+
+  .vintageEnvelopeContainer.isOpen .envelopeLetterPeek {
+    transform: translateY(-70px);
+  }
+
+  .envelopeToText {
+    font-size: 1.4rem;
+  }
+
+  .envelopeFromText {
+    font-size: 0.72rem;
+  }
+
+  .envelopeTapPrompt {
+    font-size: 0.76rem;
+    padding: 3px 10px;
+    margin-top: 5px;
+  }
+
   /* 8. Vintage Love Letter Card on mobile */
   #finalMessageCard {
     width: calc(100% - 98px) !important;
@@ -2271,14 +2511,6 @@ body {
     margin-bottom: auto !important;
     -webkit-overflow-scrolling: touch !important;
     z-index: 5 !important;
-  }
-
-  .vintageLetterPostmark {
-    top: 8px;
-    right: 8px;
-    gap: 3px;
-    transform: scale(0.65);
-    transform-origin: top right;
   }
 
   .vintageLetterTitle {
