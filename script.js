@@ -291,13 +291,25 @@ function initializePhotoStripZoomPreview() {
 
   const zoomImg = zoomPreview.querySelector('.polaroidZoomImg');
   const zoomChin = zoomPreview.querySelector('#polaroidZoomChin');
+  let activeSourceCard = null;
 
   function dismissPreview(event) {
     if (event) {
       if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function' && event.type === 'touchend') event.preventDefault();
     }
     backdrop.classList.remove('isVisible');
     zoomPreview.classList.remove('isVisible');
+
+    // Resume scrolling tracks smoothly
+    document.querySelectorAll('.photoStripTrack').forEach(function (track) {
+      track.style.animationPlayState = 'running';
+    });
+
+    if (activeSourceCard) {
+      activeSourceCard.classList.remove('isSelectedSourcePhoto');
+      activeSourceCard = null;
+    }
   }
 
   // Dismiss on clicking or tapping backdrop
@@ -308,6 +320,12 @@ function initializePhotoStripZoomPreview() {
   zoomPreview.addEventListener('click', dismissPreview);
   zoomPreview.addEventListener('touchend', dismissPreview);
 
+  const closeBtn = zoomPreview.querySelector('#polaroidZoomCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', dismissPreview);
+    closeBtn.addEventListener('touchend', dismissPreview);
+  }
+
   // Close on Escape key
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') dismissPreview();
@@ -317,9 +335,61 @@ function initializePhotoStripZoomPreview() {
     const img = card.querySelector('img');
     if (!img) return;
 
+    if (activeSourceCard) {
+      activeSourceCard.classList.remove('isSelectedSourcePhoto');
+    }
+    activeSourceCard = card;
+    card.classList.add('isSelectedSourcePhoto');
+
+    // Pause scrolling on both tracks so the photo remains stable & connected
+    document.querySelectorAll('.photoStripTrack').forEach(function (track) {
+      track.style.animationPlayState = 'paused';
+    });
+
     zoomImg.src = img.src;
     const caption = card.dataset.caption || 'Mitthi 💖';
     zoomChin.textContent = caption;
+
+    const cardRect = card.getBoundingClientRect();
+    const isLeft = card.closest('.photoStrip') && card.closest('.photoStrip').classList.contains('left');
+    const isMobile = window.innerWidth <= 680;
+
+    const previewWidth = isMobile ? Math.min(210, window.innerWidth - 58) : 235;
+    const previewEstimatedHeight = isMobile ? 260 : 290;
+
+    // Calculate vertical alignment with clicked photo
+    const cardCenterY = cardRect.top + cardRect.height / 2;
+    let targetTop = cardCenterY - previewEstimatedHeight / 2;
+    const minTop = 14;
+    const maxTop = window.innerHeight - previewEstimatedHeight - 14;
+    targetTop = Math.max(minTop, Math.min(maxTop, targetTop));
+
+    // Pointer notch Y position relative to preview card
+    const connectorRelativeY = Math.max(22, Math.min(previewEstimatedHeight - 22, cardCenterY - targetTop));
+    zoomPreview.style.setProperty('--connectorY', connectorRelativeY + 'px');
+
+    zoomPreview.classList.remove('connectedLeft', 'connectedRight');
+
+    if (isLeft) {
+      zoomPreview.classList.add('connectedLeft');
+      const targetLeft = isMobile ? 48 : Math.min(cardRect.right + 10, window.innerWidth - previewWidth - 14);
+      zoomPreview.style.left = targetLeft + 'px';
+      zoomPreview.style.right = 'auto';
+      zoomPreview.style.top = targetTop + 'px';
+      zoomPreview.style.transformOrigin = '0px ' + connectorRelativeY + 'px';
+    } else {
+      zoomPreview.classList.add('connectedRight');
+      if (isMobile) {
+        zoomPreview.style.left = 'auto';
+        zoomPreview.style.right = '48px';
+      } else {
+        const targetRight = Math.min(window.innerWidth - cardRect.left + 10, window.innerWidth - previewWidth - 14);
+        zoomPreview.style.left = 'auto';
+        zoomPreview.style.right = targetRight + 'px';
+      }
+      zoomPreview.style.top = targetTop + 'px';
+      zoomPreview.style.transformOrigin = previewWidth + 'px ' + connectorRelativeY + 'px';
+    }
 
     backdrop.classList.add('isVisible');
     zoomPreview.classList.add('isVisible');
@@ -330,7 +400,11 @@ function initializePhotoStripZoomPreview() {
       const clickedCard = clickEvent.target.closest('.polaroidCard');
       if (!clickedCard) return;
       clickEvent.stopPropagation();
-      openEnlargedCard(clickedCard);
+      if (activeSourceCard === clickedCard && zoomPreview.classList.contains('isVisible')) {
+        dismissPreview();
+      } else {
+        openEnlargedCard(clickedCard);
+      }
     });
   });
 }

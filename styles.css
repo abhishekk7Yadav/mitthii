@@ -419,18 +419,18 @@ body {
   width: 100%;
 }
 
-/* Fullscreen Backdrop for Enlarged Polaroid */
+/* Fullscreen Gentle Backdrop for Enlarged Polaroid */
 .photoZoomBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 10, 15, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(20, 10, 15, 0.32);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   z-index: 9998;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.22s ease, visibility 0.22s ease;
 }
 
 .photoZoomBackdrop.isVisible {
@@ -440,18 +440,16 @@ body {
   cursor: pointer;
 }
 
-/* Enlarged Polaroid Zoom Preview */
+/* Enlarged Polaroid Zoom Preview — Connected directly to clicked photo */
 .photoZoomPreview {
   position: fixed;
-  top: 50% !important;
-  left: 50% !important;
-  width: 245px !important;
-  max-width: 86vw !important;
+  width: 235px;
+  max-width: calc(100vw - 64px);
   background: #FFFDF9;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1.5px solid rgba(58, 43, 32, 0.22);
   border-radius: 8px;
-  padding: 12px 12px 28px 12px;
-  box-shadow: 0 20px 48px rgba(40, 20, 30, 0.45), 0 4px 14px rgba(0, 0, 0, 0.18);
+  padding: 10px 10px 22px 10px;
+  box-shadow: 0 16px 42px rgba(40, 20, 30, 0.45), 0 4px 14px rgba(0, 0, 0, 0.18);
   z-index: 9999;
   opacity: 0;
   visibility: hidden;
@@ -459,11 +457,11 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  transform: translate(-50%, -50%) scale(0.82);
+  transform: scale(0.65);
   transition:
-    opacity 0.24s ease,
-    visibility 0.24s ease,
-    transform 0.28s cubic-bezier(.34, 1.56, .64, 1);
+    opacity 0.22s ease,
+    visibility 0.22s ease,
+    transform 0.28s cubic-bezier(.34, 1.45, .64, 1);
   cursor: pointer;
 }
 
@@ -471,7 +469,72 @@ body {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  transform: scale(1) !important;
+}
+
+/* Callout connector notch pointing back to source thumbnail */
+.photoZoomPreview.connectedLeft::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: var(--connectorY, 50%);
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 12px solid #FFFDF9;
+  z-index: 5;
+}
+
+.photoZoomPreview.connectedLeft::after {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: var(--connectorY, 50%);
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-right: 13px solid rgba(58, 43, 32, 0.28);
+  z-index: 4;
+}
+
+.photoZoomPreview.connectedRight::before {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: var(--connectorY, 50%);
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 12px solid #FFFDF9;
+  z-index: 5;
+}
+
+.photoZoomPreview.connectedRight::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  top: var(--connectorY, 50%);
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-left: 13px solid rgba(58, 43, 32, 0.28);
+  z-index: 4;
+}
+
+/* Glowing ring on the clicked source polaroid on the strip */
+.polaroidCard.isSelectedSourcePhoto {
+  box-shadow: 0 0 0 3px #FF6B8B, 0 4px 14px rgba(230, 76, 101, 0.55) !important;
+  transform: scale(1.15) !important;
+  z-index: 100 !important;
+  transition: transform 0.22s cubic-bezier(.34, 1.56, .64, 1), box-shadow 0.22s ease !important;
 }
 
 .polaroidZoomCloseBtn {
@@ -2609,14 +2672,17 @@ body {
     font-size: 0.78rem;
   }
 
-  /* 13. Enlarged Photo Preview on mobile */
+  /* 13. Enlarged Photo Preview on mobile — connected to clicked photo */
   .photoZoomPreview {
     z-index: 10000;
+    width: 210px !important;
+    max-width: calc(100vw - 58px) !important;
+    padding: 8px 8px 18px 8px;
   }
 
   .photoZoomPreview.isVisible {
     pointer-events: auto !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
   }
 }
 
