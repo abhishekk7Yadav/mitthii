@@ -287,30 +287,88 @@ body {
   width: 100%;
 }
 
+/* Fullscreen Backdrop for Enlarged Polaroid */
+.photoZoomBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 15, 20, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.photoZoomBackdrop.isVisible {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 /* Enlarged Polaroid Zoom Preview */
 .photoZoomPreview {
   position: fixed;
   background: #FFFDF9;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  padding: 10px 10px 32px 10px;
-  box-shadow: 0 20px 48px rgba(50, 30, 40, 0.32), 0 6px 16px rgba(0, 0, 0, 0.14);
-  z-index: 999;
+  border-radius: 8px;
+  padding: 12px 12px 28px 12px;
+  box-shadow: 0 20px 48px rgba(40, 20, 30, 0.4), 0 4px 12px rgba(0, 0, 0, 0.14);
+  z-index: 9999;
   pointer-events: none;
   opacity: 0;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  cursor: pointer;
   transition:
-    left 0.38s cubic-bezier(.34, 1.56, .64, 1),
-    top 0.38s cubic-bezier(.34, 1.56, .64, 1),
-    width 0.38s cubic-bezier(.34, 1.56, .64, 1),
-    height 0.38s cubic-bezier(.34, 1.56, .64, 1),
-    opacity 0.28s ease;
+    left 0.32s cubic-bezier(.34, 1.56, .64, 1),
+    top 0.32s cubic-bezier(.34, 1.56, .64, 1),
+    width 0.32s cubic-bezier(.34, 1.56, .64, 1),
+    height 0.32s cubic-bezier(.34, 1.56, .64, 1),
+    opacity 0.25s ease;
   will-change: left, top, width, height, opacity;
 }
 .photoZoomPreview.isVisible {
   opacity: 1;
+  pointer-events: auto !important;
+}
+
+.polaroidZoomCloseBtn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #E64C65;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  border: 2px solid #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.2s cubic-bezier(.34, 1.56, .64, 1);
+}
+.polaroidZoomCloseBtn:hover {
+  transform: scale(1.12);
+  background: #ff5c77;
+}
+.polaroidZoomCloseBtn:active {
+  transform: scale(0.9);
+}
+
+.polaroidZoomCloseHint {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #8c5662;
+  text-align: center;
+  margin-top: 4px;
 }
 .polaroidZoomTape {
   position: absolute;
@@ -1685,12 +1743,13 @@ body {
     font-size: 0.78rem;
   }
 
-  /* 13. Enlarged Photo Preview on mobile: romantic center modal with soft backdrop */
+  /* 13. Enlarged Photo Preview on mobile */
   .photoZoomPreview {
     z-index: 10000;
   }
   .photoZoomPreview.isVisible {
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 9999px rgba(0, 0, 0, 0.35);
+    pointer-events: auto !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   }
 }
 

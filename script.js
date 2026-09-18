@@ -272,26 +272,32 @@ fillPhotoStripWithPlaceholders(document.getElementById('leftPhotoStripTrack'), '
 fillPhotoStripWithPlaceholders(document.getElementById('rightPhotoStripTrack'), 'right');
 
 function initializePhotoStripZoomPreview() {
+  const backdrop = document.createElement('div');
+  backdrop.className = 'photoZoomBackdrop';
+  backdrop.id = 'photoZoomBackdrop';
+  document.body.appendChild(backdrop);
+
   const zoomPreview = document.createElement('div');
   zoomPreview.className = 'photoZoomPreview';
   zoomPreview.innerHTML =
+    '<div class="polaroidZoomCloseBtn" id="polaroidZoomCloseBtn" aria-label="Close">✕</div>' +
     '<div class="polaroidZoomTape"></div>' +
     '<div class="polaroidZoomPhotoWrap">' +
     '<img class="polaroidZoomImg" src="" alt="Mitthi">' +
     '</div>' +
-    '<div class="polaroidZoomChin" id="polaroidZoomChin">Mitthi 💖</div>';
+    '<div class="polaroidZoomChin" id="polaroidZoomChin">Mitthi 💖</div>' +
+    '<span class="polaroidZoomCloseHint">tap to close 💕</span>';
   document.body.appendChild(zoomPreview);
 
   const zoomImg = zoomPreview.querySelector('.polaroidZoomImg');
   const zoomChin = zoomPreview.querySelector('#polaroidZoomChin');
 
   let currentSourceCard = null;
-  let settleTimeoutId = null;
 
   function getEnlargedPreviewDims() {
-    if (window.innerWidth <= 480) return { width: 220, height: 268 };
-    if (window.innerWidth <= 768) return { width: 195, height: 238 };
-    return { width: 230, height: 280 };
+    if (window.innerWidth <= 480) return { width: 230, height: 285 };
+    if (window.innerWidth <= 768) return { width: 210, height: 260 };
+    return { width: 240, height: 300 };
   }
 
   function setPreviewRect(left, top, width, height, opacity, withTransition) {
@@ -305,105 +311,67 @@ function initializePhotoStripZoomPreview() {
     zoomPreview.style.opacity = opacity;
   }
 
-  function dismissPreview() {
+  function dismissPreview(event) {
+    if (event && event.stopPropagation) {
+      event.stopPropagation();
+    }
     zoomPreview.classList.remove('isVisible');
+    backdrop.classList.remove('isVisible');
     zoomPreview.style.pointerEvents = 'none';
+    backdrop.style.pointerEvents = 'none';
     currentSourceCard = null;
   }
 
-  // Dismiss when tapping on the enlarged preview or anywhere outside
-  zoomPreview.addEventListener('click', function (e) {
-    e.stopPropagation();
-    dismissPreview();
+  // Dismiss on clicking backdrop
+  backdrop.addEventListener('click', dismissPreview);
+  backdrop.addEventListener('touchend', dismissPreview);
+
+  // Dismiss on clicking/tapping the preview card or close button
+  zoomPreview.addEventListener('click', dismissPreview);
+  zoomPreview.addEventListener('touchend', dismissPreview);
+
+  // Close on Escape key
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') dismissPreview();
   });
 
-  document.addEventListener('click', function (e) {
-    if (zoomPreview.classList.contains('isVisible') && !e.target.closest('.polaroidCard')) {
-      dismissPreview();
+  function openEnlargedCard(card) {
+    currentSourceCard = card;
+    const img = card.querySelector('img');
+    if (!img) return;
+
+    zoomImg.src = img.src;
+    const caption = card.dataset.caption || 'Mitthi 💖';
+    zoomChin.textContent = caption;
+
+    const isMobile = window.innerWidth <= 680;
+    const dims = getEnlargedPreviewDims();
+
+    if (isMobile) {
+      // Centered romantic modal on mobile screen
+      const left = Math.round((window.innerWidth - dims.width) / 2);
+      const top = Math.round((window.innerHeight - dims.height) / 2);
+      setPreviewRect(left, top, dims.width, dims.height, 1, true);
+    } else {
+      const sourceBounds = card.getBoundingClientRect();
+      const isLeftStrip = (sourceBounds.left + sourceBounds.width / 2) < (window.innerWidth / 2);
+      let previewLeft = isLeftStrip ? (sourceBounds.right + 14) : (sourceBounds.left - dims.width - 14);
+      let previewTop = Math.max(12, Math.min(sourceBounds.top, window.innerHeight - dims.height - 12));
+      setPreviewRect(previewLeft, previewTop, dims.width, dims.height, 1, true);
     }
-  });
+
+    backdrop.classList.add('isVisible');
+    backdrop.style.pointerEvents = 'auto';
+    zoomPreview.classList.add('isVisible');
+    zoomPreview.style.pointerEvents = 'auto';
+  }
 
   document.querySelectorAll('.photoStripTrack').forEach(function (trackElement) {
-    // 1. Mouse hover for desktop
-    trackElement.addEventListener('mouseover', function (hoverEvent) {
-      if (window.innerWidth <= 680) return; // on mobile use tap instead of hover
-      const hoveredCard = hoverEvent.target.closest('.polaroidCard');
-      if (!hoveredCard) return;
-      clearTimeout(settleTimeoutId);
-      currentSourceCard = hoveredCard;
-
-      const img = hoveredCard.querySelector('img');
-      if (!img) return;
-
-      const sourceBounds = hoveredCard.getBoundingClientRect();
-      zoomImg.src = img.src;
-      const caption = hoveredCard.dataset.caption || 'Mitthi 💖';
-      zoomChin.textContent = caption;
-
-      setPreviewRect(sourceBounds.left, sourceBounds.top, sourceBounds.width, sourceBounds.height, 0, false);
-      void zoomPreview.offsetWidth;
-
-      const dims = getEnlargedPreviewDims();
-      const isLeftStrip = (sourceBounds.left + sourceBounds.width / 2) < (window.innerWidth / 2);
-
-      let previewLeft = isLeftStrip ? (sourceBounds.right + 14) : (sourceBounds.left - dims.width - 14);
-      if (previewLeft + dims.width > window.innerWidth - 12) previewLeft = window.innerWidth - dims.width - 12;
-      if (previewLeft < 12) previewLeft = 12;
-
-      let previewTop = sourceBounds.top + sourceBounds.height / 2 - dims.height / 2;
-      previewTop = Math.max(12, Math.min(previewTop, window.innerHeight - dims.height - 12));
-
-      setPreviewRect(previewLeft, previewTop, dims.width, dims.height, 1, true);
-      zoomPreview.classList.add('isVisible');
-    });
-
-    trackElement.addEventListener('mouseout', function (hoverEvent) {
-      if (window.innerWidth <= 680) return;
-      const leftCard = hoverEvent.target.closest('.polaroidCard');
-      if (!leftCard || leftCard !== currentSourceCard) return;
-
-      const sourceBounds = leftCard.getBoundingClientRect();
-      setPreviewRect(sourceBounds.left, sourceBounds.top, sourceBounds.width, sourceBounds.height, 0, true);
-      zoomPreview.classList.remove('isVisible');
-
-      settleTimeoutId = setTimeout(function () {
-        currentSourceCard = null;
-      }, 380);
-    });
-
-    // 2. Click / tap handler for both mobile & desktop
     trackElement.addEventListener('click', function (clickEvent) {
       const clickedCard = clickEvent.target.closest('.polaroidCard');
       if (!clickedCard) return;
       clickEvent.stopPropagation();
-
-      const img = clickedCard.querySelector('img');
-      if (!img) return;
-
-      currentSourceCard = clickedCard;
-      zoomImg.src = img.src;
-      const caption = clickedCard.dataset.caption || 'Mitthi 💖';
-      zoomChin.textContent = caption;
-
-      const isMobile = window.innerWidth <= 680;
-      if (isMobile) {
-        // Centered romantic polaroid card on mobile screen
-        const dims = { width: 230, height: 280 };
-        const left = Math.round((window.innerWidth - dims.width) / 2);
-        const top = Math.round((window.innerHeight - dims.height) / 2);
-        setPreviewRect(left, top, dims.width, dims.height, 1, true);
-        zoomPreview.classList.add('isVisible');
-        zoomPreview.style.pointerEvents = 'auto';
-      } else {
-        const sourceBounds = clickedCard.getBoundingClientRect();
-        const dims = getEnlargedPreviewDims();
-        const isLeftStrip = (sourceBounds.left + sourceBounds.width / 2) < (window.innerWidth / 2);
-        let previewLeft = isLeftStrip ? (sourceBounds.right + 14) : (sourceBounds.left - dims.width - 14);
-        let previewTop = Math.max(12, Math.min(sourceBounds.top, window.innerHeight - dims.height - 12));
-        setPreviewRect(previewLeft, previewTop, dims.width, dims.height, 1, true);
-        zoomPreview.classList.add('isVisible');
-        zoomPreview.style.pointerEvents = 'auto';
-      }
+      openEnlargedCard(clickedCard);
     });
   });
 }
