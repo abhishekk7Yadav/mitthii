@@ -396,20 +396,9 @@ function initializePhotoStripZoomPreview() {
       track.style.animationPlayState = 'paused';
     });
 
-    // 0ms instant display: set cached thumbnail immediately so user sees the photo without waiting
-    zoomImg.src = img.src;
-
-    // Concurrently upgrade to crisp full-res image
+    // Load crisp full-resolution image directly with zero blurry phase
     const fullUrl = card.dataset.fullUrl || img.src;
-    if (fullUrl && fullUrl !== img.src) {
-      const loader = new Image();
-      loader.onload = function () {
-        if (activeSourceCard === card && zoomPreview.classList.contains('isVisible')) {
-          zoomImg.src = fullUrl;
-        }
-      };
-      loader.src = fullUrl;
-    }
+    zoomImg.src = fullUrl;
 
     const caption = card.dataset.caption || 'Mitthi 💖';
     zoomChin.textContent = caption;
@@ -449,7 +438,26 @@ function initializePhotoStripZoomPreview() {
 }
 initializePhotoStripZoomPreview();
 
+function preloadFullResolutionPhotos() {
+  if (window._fullPhotosPreloaded) return;
+  window._fullPhotosPreloaded = true;
+  girlfriendPhotoUrls.forEach(function (item) {
+    const preloader = new Image();
+    preloader.src = item.url;
+  });
+}
+
+// Preload full photos smoothly in the background
+if (document.readyState === 'complete') {
+  setTimeout(preloadFullResolutionPhotos, 800);
+} else {
+  window.addEventListener('load', function () {
+    setTimeout(preloadFullResolutionPhotos, 800);
+  });
+}
+
 function revealPhotoStripsAndBeginScrolling() {
+  preloadFullResolutionPhotos();
   const leftStrip = document.getElementById('leftPhotoStrip');
   const rightStrip = document.getElementById('rightPhotoStrip');
   leftStrip.classList.add('isRevealed');
