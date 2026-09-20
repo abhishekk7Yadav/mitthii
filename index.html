@@ -85,7 +85,8 @@
       <div class="birthdayCakeCard roomOverlayCard paperCard" id="birthdayCakeCard">
         <div class="washiTapeAccent"></div>
         <h2 id="birthdayCakeTitle">Make a wish 🎂✨</h2>
-        <div class="cakeAssembly" id="cakeAssembly" onclick="handleCakeAssemblyClick(event)" style="cursor: pointer;" title="Make a wish & blow the candle!">
+        <div class="cakeAssembly" id="cakeAssembly" onclick="handleCakeAssemblyClick(event)" style="cursor: pointer;"
+          title="Make a wish & blow the candle!">
           <div class="birthdayCandle">
             <div class="birthdayCandleFlame" id="birthdayCandleFlame"></div>
           </div>
@@ -108,9 +109,8 @@
             <div class="cakeCutDottedLine" id="cakeCutDottedLine" aria-hidden="true"></div>
 
             <!-- The slice piece that cuts and slides out -->
-            <div class="cakeSlicePiece" id="cakeSlicePiece"
-                 onmouseenter="handleCakeSliceHover()"
-                 onclick="handleCutCakeClick(event)">
+            <div class="cakeSlicePiece" id="cakeSlicePiece" onmouseenter="handleCakeSliceHover()"
+              onclick="handleCutCakeClick(event)">
               <div class="cakeSliceTopFrosting" aria-hidden="true"></div>
               <div class="cakeSliceInsideFace" aria-hidden="true">
                 <span class="sliceLayer sponge"></span>
@@ -123,30 +123,31 @@
             </div>
 
             <!-- Floating Cake Knife with hover and tap cutting action -->
-            <div class="cakeKnifeGuide" id="cakeKnifeGuide"
-                 onmouseenter="handleCakeSliceHover()"
-                 onclick="handleCutCakeClick(event)"
-                 title="Cut the cake 🍰">
+            <div class="cakeKnifeGuide" id="cakeKnifeGuide" onmouseenter="handleCakeSliceHover()"
+              onclick="handleCutCakeClick(event)" title="Cut the cake 🍰">
               <svg class="cakeKnifeSvg" viewBox="0 0 64 64" width="44" height="44" fill="none">
                 <defs>
                   <linearGradient id="knifeBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffffff"/>
-                    <stop offset="50%" stop-color="#e2e8f0"/>
-                    <stop offset="100%" stop-color="#94a3b8"/>
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="50%" stop-color="#e2e8f0" />
+                    <stop offset="100%" stop-color="#94a3b8" />
                   </linearGradient>
                   <linearGradient id="knifeHandleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffb4c8"/>
-                    <stop offset="100%" stop-color="#e05378"/>
+                    <stop offset="0%" stop-color="#ffb4c8" />
+                    <stop offset="100%" stop-color="#e05378" />
                   </linearGradient>
                 </defs>
                 <!-- Knife Blade -->
-                <path d="M14 46 L48 12 C50 10 53 12 51 16 L26 52 Z" fill="url(#knifeBladeGrad)" stroke="#64748b" stroke-width="1.2" stroke-linejoin="round"/>
-                <path d="M16 44 L47 13" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M14 46 L48 12 C50 10 53 12 51 16 L26 52 Z" fill="url(#knifeBladeGrad)" stroke="#64748b"
+                  stroke-width="1.2" stroke-linejoin="round" />
+                <path d="M16 44 L47 13" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" />
                 <!-- Gold Bolster -->
-                <rect x="23" y="49" width="7" height="4" rx="1.5" transform="rotate(-45 23 49)" fill="#f59e0b" stroke="#d97706" stroke-width="0.8"/>
+                <rect x="23" y="49" width="7" height="4" rx="1.5" transform="rotate(-45 23 49)" fill="#f59e0b"
+                  stroke="#d97706" stroke-width="0.8" />
                 <!-- Pink Handle -->
-                <path d="M9 57 L21 45 C23 43 26 46 24 48 L12 60 C10 62 7 59 9 57 Z" fill="url(#knifeHandleGrad)" stroke="#be185d" stroke-width="1"/>
-                <circle cx="15" cy="53" r="1.2" fill="#ffffff" opacity="0.9"/>
+                <path d="M9 57 L21 45 C23 43 26 46 24 48 L12 60 C10 62 7 59 9 57 Z" fill="url(#knifeHandleGrad)"
+                  stroke="#be185d" stroke-width="1" />
+                <circle cx="15" cy="53" r="1.2" fill="#ffffff" opacity="0.9" />
               </svg>
               <div class="knifeHoverPrompt"><span>cut here 🔪</span></div>
             </div>
@@ -154,12 +155,15 @@
           <div class="cakePlate"></div>
         </div>
         <p class="candleBlowMicHint" id="candleBlowMicHint">✨ Make a wish & tap below 🎂💕</p>
-        <button class="primaryButton" id="blowCandleButton" onclick="handleBlowCandleClick()">Blow the candle 🕯️💕</button>
-        <button class="primaryButton" id="cutCakeButton" style="display: none;" onclick="handleCutCakeClick(event)">Cut the cake 🍰✨</button>
+        <button class="primaryButton" id="blowCandleButton" onclick="handleBlowCandleClick()">Blow the candle
+          🕯️💕</button>
+        <button class="primaryButton" id="cutCakeButton" style="display: none;" onclick="handleCutCakeClick(event)">Cut
+          the cake 🍰✨</button>
       </div>
 
       <!-- SCENE 3.5: Vintage Letter Envelope (Appears closed, then animates open on tap) -->
-      <div class="vintageEnvelopeContainer roomOverlayCard" id="vintageEnvelopeContainer" onclick="handleEnvelopeOpenClick()">
+      <div class="vintageEnvelopeContainer roomOverlayCard" id="vintageEnvelopeContainer"
+        onclick="handleEnvelopeOpenClick()">
         <div class="envelopeWrap">
           <div class="envelopeFlap" id="envelopeFlap">
             <div class="envelopeSealHeart">💌</div>
@@ -202,7 +206,8 @@
             <div class="stickyNotesPin">📌</div>
             <div class="stickyNoteCard" id="stickyNoteCard">
               <span class="stickyNoteCount" id="stickyNoteCount">1 / 7</span>
-              <p class="stickyNoteText" id="stickyNoteText">Tumhara wo bina soche khul ke muskurana, jo mera poora din instantly accha kar deta hai 🥺✨</p>
+              <p class="stickyNoteText" id="stickyNoteText">Tumhara wo bina soche khul ke muskurana, jo mera poora din
+                instantly accha kar deta hai 🥺✨</p>
               <span class="stickyNoteTapPrompt">tap for another reason 💕</span>
             </div>
           </div>
@@ -228,10 +233,13 @@
               <div class="cassetteSpoolHole"></div>
             </div>
           </div>
-          <button class="cassettePlayButton" id="cassettePlayButton" type="button" onclick="event.stopPropagation(); toggleVoiceNotePlayback()">
+          <button class="cassettePlayButton" id="cassettePlayButton" type="button"
+            onclick="event.stopPropagation(); toggleVoiceNotePlayback()">
             <span id="cassettePlayIcon">▶</span> <span id="cassettePlayText">play this 💕</span>
           </button>
-          <audio id="voiceNoteAudioElement" src="./assets/audio/bdy_mitthii.mp3" preload="auto" playsinline webkit-playsinline></audio>
+          <audio id="voiceNoteAudioElement"
+            src="https://drive.google.com/uc?export=download&id=1DY6phfKkc_oXOzyDMNfu_R8QUeymUjQC" preload="auto"
+            playsinline webkit-playsinline></audio>
         </div>
 
         <button class="primaryButton replayExperienceButton" id="replayExperienceButton"
@@ -243,4 +251,5 @@
 
   <script src="script.js?v=6.0"></script>
 </body>
+
 </html>

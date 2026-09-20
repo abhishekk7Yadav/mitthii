@@ -1877,8 +1877,16 @@ function initVoiceNoteAudio() {
   const durationEl = document.getElementById('cassetteDuration');
   if (!audioElement) return;
 
-  if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
-    audioElement.src = './assets/audio/bdy_mitthii.mp3';
+  const declaredSrc = audioElement.getAttribute('src');
+  if (declaredSrc) {
+    let finalSrc = declaredSrc;
+    if (finalSrc.includes('drive.google.com/file/d/')) {
+      const m = finalSrc.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (m && m[1]) finalSrc = 'https://drive.google.com/uc?export=download&id=' + m[1];
+    }
+    audioElement.src = finalSrc;
+  } else if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
+    audioElement.src = 'https://drive.google.com/uc?export=download&id=1DY6phfKkc_oXOzyDMNfu_R8QUeymUjQC';
   }
   audioElement.volume = 1.0;
 
@@ -1982,16 +1990,21 @@ function toggleVoiceNotePlayback() {
   if (startPlayback !== undefined) {
     startPlayback
       .catch(function (err) {
-        console.warn('Primary ./assets/audio/bdy_mitthii.mp3 failed, trying root fallback:', err);
-        audioElement.src = './bdy_mitthii.mp3';
+        console.warn('Primary audio stream failed, trying local assets fallback:', err);
+        audioElement.src = './assets/audio/bdy_mitthii.mp3';
         audioElement.load();
         audioElement.play()
-          .catch(function (fallbackErr) {
-            console.error('Audio playback completely failed:', fallbackErr);
-            voiceNoteIsPlaying = false;
-            if (cassetteEl) cassetteEl.classList.remove('isPlaying');
-            if (playIcon) playIcon.textContent = '▶';
-            if (playText) playText.textContent = 'play this 💕';
+          .catch(function () {
+            audioElement.src = './bdy_mitthii.mp3';
+            audioElement.load();
+            audioElement.play()
+              .catch(function (fallbackErr) {
+                console.error('Audio playback completely failed:', fallbackErr);
+                voiceNoteIsPlaying = false;
+                if (cassetteEl) cassetteEl.classList.remove('isPlaying');
+                if (playIcon) playIcon.textContent = '▶';
+                if (playText) playText.textContent = 'play this 💕';
+              });
           });
       });
   }
