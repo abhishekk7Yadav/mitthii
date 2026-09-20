@@ -332,25 +332,27 @@ function initializePhotoStripZoomPreview() {
     if (event) {
       if (typeof event.stopPropagation === 'function') event.stopPropagation();
     }
-    // Prevent accidental closing within 120ms of opening tap
-    if (Date.now() - openedAtTimestamp < 120) return;
+    // Prevent accidental closing within 60ms of opening tap
+    if (Date.now() - openedAtTimestamp < 60) return;
     if (!zoomPreview.classList.contains('isVisible')) return;
 
+    // Immediately clear source card highlight to prevent any transition conflict
+    if (activeSourceCard) {
+      activeSourceCard.classList.remove('isSelectedSourcePhoto');
+      activeSourceCard = null;
+    }
+
+    // Snappily hide modal and backdrop with pure GPU hardware acceleration
     backdrop.classList.remove('isVisible');
     zoomPreview.classList.remove('isVisible');
 
     if (closeTimeout) clearTimeout(closeTimeout);
     closeTimeout = setTimeout(function () {
-      // Resume scrolling tracks smoothly after modal finishes closing
+      // Resume scrolling tracks smoothly right after modal finishes fast 130ms exit
       document.querySelectorAll('.photoStripTrack').forEach(function (track) {
         track.style.animationPlayState = 'running';
       });
-
-      if (activeSourceCard) {
-        activeSourceCard.classList.remove('isSelectedSourcePhoto');
-        activeSourceCard = null;
-      }
-    }, 250);
+    }, 130);
   }
 
   // Dismiss on clicking backdrop

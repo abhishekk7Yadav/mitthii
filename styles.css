@@ -430,36 +430,42 @@ body {
   z-index: 99990 !important;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.13s ease-out;
   will-change: opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .photoZoomBackdrop.isVisible {
   opacity: 1 !important;
   pointer-events: auto !important;
   cursor: pointer;
+  transition: opacity 0.18s ease-out;
 }
 
-/* Enlarged Polaroid Zoom Preview — Centered gracefully with 1:1 scale to eliminate raster blur */
+/* Enlarged Polaroid Zoom Preview — Hardware accelerated pure GPU transitions with zero calc jitter */
 .photoZoomPreview {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
-  transform: translate3d(-50%, calc(-50% + 14px), 0) !important;
+  transform: translate3d(-50%, -50%, 0) scale(0.96) !important;
   width: min(84vw, 310px) !important;
   max-width: 315px;
   background: #FFFDF9;
   border: 1.5px solid rgba(58, 43, 32, 0.2);
   border-radius: 10px;
   padding: 10px 10px 16px 10px;
-  box-shadow: 0 20px 50px rgba(30, 10, 20, 0.45), 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 16px 40px rgba(30, 10, 20, 0.4), 0 4px 14px rgba(0, 0, 0, 0.12);
   z-index: 99995 !important;
   opacity: 0 !important;
   pointer-events: none !important;
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box;
-  transition: opacity 0.22s ease-out, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: opacity 0.13s ease-out, transform 0.13s ease-out !important;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
@@ -468,15 +474,14 @@ body {
 .photoZoomPreview.isVisible {
   opacity: 1 !important;
   pointer-events: auto !important;
-  transform: translate3d(-50%, -50%, 0) !important;
+  transform: translate3d(-50%, -50%, 0) scale(1) !important;
+  transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Glowing ring on the clicked source polaroid on the strip */
+/* Glowing ring on the clicked source polaroid on the strip — kept without scale change to prevent track jank */
 .polaroidCard.isSelectedSourcePhoto {
   box-shadow: 0 0 0 3px #FF6B8B, 0 4px 14px rgba(230, 76, 101, 0.55) !important;
-  transform: scale(1.15) !important;
   z-index: 100 !important;
-  transition: transform 0.22s cubic-bezier(.34, 1.56, .64, 1), box-shadow 0.22s ease !important;
 }
 
 .polaroidZoomCloseBtn {
@@ -3225,20 +3230,20 @@ body {
     font-size: 0.84rem !important;
   }
 
-  /* 13. Enlarged Photo Preview on mobile — centered gracefully with 1:1 scale */
+  /* 13. Enlarged Photo Preview on mobile */
   .photoZoomPreview {
     z-index: 99995 !important;
     width: min(84vw, 295px) !important;
     max-width: 300px !important;
     padding: 10px 10px 16px 10px !important;
     touch-action: manipulation !important;
-    transform: translate3d(-50%, calc(-50% + 14px), 0) !important;
+    transform: translate3d(-50%, -50%, 0) scale(0.96) !important;
   }
 
   .photoZoomPreview.isVisible {
     pointer-events: auto !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-    transform: translate3d(-50%, -50%, 0) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+    transform: translate3d(-50%, -50%, 0) scale(1) !important;
   }
 }
 
