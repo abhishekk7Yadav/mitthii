@@ -9,7 +9,7 @@
   <meta http-equiv="Expires" content="0">
   <title>Happy Birthday Mitthi 💖</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.browser.min.js"></script>
-  <link rel="stylesheet" href="styles.css?v=3.2">
+  <link rel="stylesheet" href="styles.css?v=3.5">
 </head>
 
 <body>
@@ -210,7 +210,7 @@
 
 
         <!-- retro cassette tape voice note player -->
-        <div class="retroCassettePlayer" id="retroCassettePlayer">
+        <div class="retroCassettePlayer" id="retroCassettePlayer" onclick="toggleVoiceNotePlayback()">
           <div class="cassetteHeader">
             <span class="cassetteTapeLabel">wanna listen something ? 🎙️💕</span>
             <span class="cassetteDuration" id="cassetteDuration">0:00</span>
@@ -228,13 +228,10 @@
               <div class="cassetteSpoolHole"></div>
             </div>
           </div>
-          <button class="cassettePlayButton" id="cassettePlayButton" onclick="toggleVoiceNotePlayback()">
+          <button class="cassettePlayButton" id="cassettePlayButton" type="button" onclick="event.stopPropagation(); toggleVoiceNotePlayback()">
             <span id="cassettePlayIcon">▶</span> <span id="cassettePlayText">play this 💕</span>
           </button>
-          <audio id="voiceNoteAudioElement" src="assets/audio/bdy_mitthii.mp3" preload="auto">
-            <source src="assets/audio/bdy_mitthii.mp3" type="audio/mpeg">
-            <source src="bdy_mitthii.mp3" type="audio/mpeg">
-          </audio>
+          <audio id="voiceNoteAudioElement" src="bdy_mitthii.mp3" preload="auto" playsinline webkit-playsinline></audio>
         </div>
 
         <button class="primaryButton replayExperienceButton" id="replayExperienceButton"
@@ -244,7 +241,6 @@
 
   </div>
 
-  <script src="script.js?v=5.0"></script>
+  <script src="script.js?v=6.0"></script>
 </body>
-
 </html>

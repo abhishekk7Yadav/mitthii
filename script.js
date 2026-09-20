@@ -1862,15 +1862,25 @@ function handleReplayClick() {
    ============================================================ */
 let voiceNoteIsPlaying = false;
 
+// Pre-unlock audio pipeline on first user interaction so mobile browsers allow instant playback
+function preloadVoiceAudioOnInteraction() {
+  const audioElement = document.getElementById('voiceNoteAudioElement');
+  if (audioElement && audioElement.paused && audioElement.readyState === 0) {
+    audioElement.load();
+  }
+}
+window.addEventListener('touchstart', preloadVoiceAudioOnInteraction, { once: true, passive: true });
+window.addEventListener('click', preloadVoiceAudioOnInteraction, { once: true, passive: true });
+
 function initVoiceNoteAudio() {
   const audioElement = document.getElementById('voiceNoteAudioElement');
   const durationEl = document.getElementById('cassetteDuration');
   if (!audioElement) return;
 
-  const initialSrc = audioElement.getAttribute('src') || 'assets/audio/bdy_mitthii.mp3';
   if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
-    audioElement.src = initialSrc;
+    audioElement.src = 'bdy_mitthii.mp3';
   }
+  audioElement.volume = 1.0;
 
   const updateDuration = function () {
     if (audioElement.duration && !isNaN(audioElement.duration) && durationEl) {
@@ -1911,6 +1921,26 @@ function initVoiceNoteAudio() {
       if (playText) playText.textContent = 'play this 💕';
     }
   });
+
+  audioElement.addEventListener('play', function () {
+    voiceNoteIsPlaying = true;
+    const cassetteEl = document.getElementById('retroCassettePlayer');
+    const playIcon = document.getElementById('cassettePlayIcon');
+    const playText = document.getElementById('cassettePlayText');
+    if (cassetteEl) cassetteEl.classList.add('isPlaying');
+    if (playIcon) playIcon.textContent = '⏸';
+    if (playText) playText.textContent = 'Pause voice note';
+  });
+
+  // Attach touch listeners to button and cassette
+  const playBtn = document.getElementById('cassettePlayButton');
+  if (playBtn) {
+    playBtn.addEventListener('touchend', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleVoiceNotePlayback();
+    }, { passive: false });
+  }
 }
 
 function toggleVoiceNotePlayback() {
@@ -1921,11 +1951,12 @@ function toggleVoiceNotePlayback() {
   if (!audioElement) return;
 
   if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
-    audioElement.src = 'assets/audio/bdy_mitthii.mp3';
+    audioElement.src = 'bdy_mitthii.mp3';
   }
+  audioElement.volume = 1.0;
 
   // If already playing, pause it
-  if (!audioElement.paused && voiceNoteIsPlaying) {
+  if (!audioElement.paused) {
     audioElement.pause();
     voiceNoteIsPlaying = false;
     if (cassetteEl) cassetteEl.classList.remove('isPlaying');
@@ -1940,29 +1971,27 @@ function toggleVoiceNotePlayback() {
     bgSpeaker.pause();
   }
 
+  // Show playing UI immediately
+  voiceNoteIsPlaying = true;
+  if (cassetteEl) cassetteEl.classList.add('isPlaying');
+  if (playIcon) playIcon.textContent = '⏸';
+  if (playText) playText.textContent = 'Pause voice note';
+
   // Attempt to play primary source
   const startPlayback = audioElement.play();
   if (startPlayback !== undefined) {
     startPlayback
-      .then(function () {
-        voiceNoteIsPlaying = true;
-        if (cassetteEl) cassetteEl.classList.add('isPlaying');
-        if (playIcon) playIcon.textContent = '⏸';
-        if (playText) playText.textContent = 'Pause voice note';
-      })
       .catch(function (err) {
-        console.warn('Primary voice note path failed, trying root fallback:', err);
-        audioElement.src = 'bdy_mitthii.mp3';
+        console.warn('Primary bdy_mitthii.mp3 failed, trying assets fallback:', err);
+        audioElement.src = 'assets/audio/bdy_mitthii.mp3';
         audioElement.load();
         audioElement.play()
-          .then(function () {
-            voiceNoteIsPlaying = true;
-            if (cassetteEl) cassetteEl.classList.add('isPlaying');
-            if (playIcon) playIcon.textContent = '⏸';
-            if (playText) playText.textContent = 'Pause voice note';
-          })
           .catch(function (fallbackErr) {
             console.error('Audio playback completely failed:', fallbackErr);
+            voiceNoteIsPlaying = false;
+            if (cassetteEl) cassetteEl.classList.remove('isPlaying');
+            if (playIcon) playIcon.textContent = '▶';
+            if (playText) playText.textContent = 'play this 💕';
           });
       });
   }

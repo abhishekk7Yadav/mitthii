@@ -2614,6 +2614,13 @@ body {
   gap: 6px;
   box-shadow: 2px 3px 0 rgba(70, 30, 40, 0.15);
   transition: transform 0.15s ease, background 0.15s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.cassettePlayButton * {
+  pointer-events: none;
 }
 
 .cassettePlayButton:hover {
