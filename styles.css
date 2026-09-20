@@ -440,12 +440,12 @@ body {
   cursor: pointer;
 }
 
-/* Enlarged Polaroid Zoom Preview — Centered gracefully */
+/* Enlarged Polaroid Zoom Preview — Centered gracefully with 1:1 scale to eliminate raster blur */
 .photoZoomPreview {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
-  transform: translate3d(-50%, -50%, 0) scale(0.88) !important;
+  transform: translate3d(-50%, calc(-50% + 14px), 0) !important;
   width: min(84vw, 310px) !important;
   max-width: 315px;
   background: #FFFDF9;
@@ -459,8 +459,7 @@ body {
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box;
-  transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1), transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  will-change: transform, opacity;
+  transition: opacity 0.22s ease-out, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
@@ -469,7 +468,7 @@ body {
 .photoZoomPreview.isVisible {
   opacity: 1 !important;
   pointer-events: auto !important;
-  transform: translate3d(-50%, -50%, 0) scale(1) !important;
+  transform: translate3d(-50%, -50%, 0) !important;
 }
 
 /* Glowing ring on the clicked source polaroid on the strip */
@@ -546,6 +545,10 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .polaroidZoomChin {
@@ -2856,19 +2859,20 @@ body {
     font-size: 0.84rem !important;
   }
 
-  /* 13. Enlarged Photo Preview on mobile — centered gracefully */
+  /* 13. Enlarged Photo Preview on mobile — centered gracefully with 1:1 scale */
   .photoZoomPreview {
     z-index: 99995 !important;
     width: min(84vw, 295px) !important;
     max-width: 300px !important;
     padding: 10px 10px 16px 10px !important;
     touch-action: manipulation !important;
+    transform: translate3d(-50%, calc(-50% + 14px), 0) !important;
   }
 
   .photoZoomPreview.isVisible {
     pointer-events: auto !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-    transform: translate3d(-50%, -50%, 0) scale(1) !important;
+    transform: translate3d(-50%, -50%, 0) !important;
   }
 }
 

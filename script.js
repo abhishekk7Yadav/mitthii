@@ -438,26 +438,30 @@ function initializePhotoStripZoomPreview() {
 }
 initializePhotoStripZoomPreview();
 
-function preloadFullResolutionPhotos() {
-  if (window._fullPhotosPreloaded) return;
-  window._fullPhotosPreloaded = true;
+const preloadedImageObjects = {};
+
+function preloadAndDecodeAllPhotos() {
   girlfriendPhotoUrls.forEach(function (item) {
-    const preloader = new Image();
-    preloader.src = item.url;
+    if (!item || !item.url) return;
+    const img = new Image();
+    img.src = item.url;
+    if (img.decode) {
+      img.decode().then(function () {
+        preloadedImageObjects[item.url] = img;
+      }).catch(function () {
+        preloadedImageObjects[item.url] = img;
+      });
+    } else {
+      preloadedImageObjects[item.url] = img;
+    }
   });
 }
 
-// Preload full photos smoothly in the background
-if (document.readyState === 'complete') {
-  setTimeout(preloadFullResolutionPhotos, 800);
-} else {
-  window.addEventListener('load', function () {
-    setTimeout(preloadFullResolutionPhotos, 800);
-  });
-}
+// Start preloading and decoding immediately on page load
+preloadAndDecodeAllPhotos();
 
 function revealPhotoStripsAndBeginScrolling() {
-  preloadFullResolutionPhotos();
+  preloadAndDecodeAllPhotos();
   const leftStrip = document.getElementById('leftPhotoStrip');
   const rightStrip = document.getElementById('rightPhotoStrip');
   leftStrip.classList.add('isRevealed');
