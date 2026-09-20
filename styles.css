@@ -426,55 +426,50 @@ body {
 .photoZoomBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 10, 15, 0.32);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 9998;
+  background: rgba(16, 8, 14, 0.58);
+  z-index: 99990 !important;
   opacity: 0;
-  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.22s ease, visibility 0.22s ease;
+  transition: opacity 0.28s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
 }
 
 .photoZoomBackdrop.isVisible {
   opacity: 1 !important;
-  visibility: visible !important;
   pointer-events: auto !important;
   cursor: pointer;
 }
 
-/* Enlarged Polaroid Zoom Preview — Connected directly to clicked photo */
 /* Enlarged Polaroid Zoom Preview — Centered gracefully */
 .photoZoomPreview {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) scale(0.7) !important;
-  width: min(84vw, 295px) !important;
-  max-width: 320px;
+  transform: translate3d(-50%, -50%, 0) scale(0.85) !important;
+  width: min(84vw, 310px) !important;
+  max-width: 315px;
   background: #FFFDF9;
-  border: 1.5px solid rgba(58, 43, 32, 0.22);
-  border-radius: 8px;
-  padding: 10px 10px 20px 10px;
-  box-shadow: 0 20px 55px rgba(40, 20, 30, 0.48), 0 4px 14px rgba(0, 0, 0, 0.18);
-  z-index: 99999 !important;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
+  border: 1.5px solid rgba(58, 43, 32, 0.2);
+  border-radius: 10px;
+  padding: 10px 10px 16px 10px;
+  box-shadow: 0 20px 50px rgba(30, 10, 20, 0.45), 0 4px 14px rgba(0, 0, 0, 0.15);
+  z-index: 99995 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  flex-direction: column !important;
   box-sizing: border-box;
-  transition: opacity 0.24s ease, visibility 0.24s ease, transform 0.28s cubic-bezier(.34, 1.56, .64, 1) !important;
-  cursor: pointer;
+  transition: opacity 0.26s cubic-bezier(0.25, 1, 0.5, 1), transform 0.28s cubic-bezier(0.25, 1.2, 0.5, 1) !important;
+  will-change: transform, opacity;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
 }
 
 .photoZoomPreview.isVisible {
   opacity: 1 !important;
-  visibility: visible !important;
   pointer-events: auto !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  transform: translate3d(-50%, -50%, 0) scale(1) !important;
 }
 
 /* Glowing ring on the clicked source polaroid on the strip */
@@ -1972,6 +1967,7 @@ body {
   font-size: 1.05rem;
   font-weight: 600;
   color: #944b5d;
+}
 /* ============================================================
    Photo Memories Scrapbook Section (All 30 Moments)
    ============================================================ */
@@ -2402,15 +2398,19 @@ body {
     min-height: 100dvh;
   }
 
-  .experienceScene {
-    padding: 12px 6px;
+  html, body {
+    overflow-x: hidden !important;
   }
 
-  /* 1. Side photo strips on mobile: slim, elegant, floating on left and right borders */
+  .experienceScene {
+    padding: 10px 4px !important;
+  }
+
+  /* 1. Side photo strips on mobile: slim, elegant, floating strictly on left and right borders */
   .photoStrip {
     display: block !important;
-    width: 44px !important;
-    z-index: 5 !important;
+    width: 42px !important;
+    z-index: 10 !important;
     opacity: 0;
     pointer-events: auto !important;
   }
@@ -2430,7 +2430,7 @@ body {
 
   .photoStripTrack {
     padding: 6px 1px !important;
-    gap: 14px !important;
+    gap: 12px !important;
   }
 
   .photoStrip.left .photoStripTrack {
@@ -2442,7 +2442,7 @@ body {
   }
 
   .polaroidCard {
-    width: 38px !important;
+    width: 36px !important;
     padding: 3px 2px 5px 2px !important;
     border-radius: 2px !important;
     box-shadow: 0 2px 5px rgba(50, 30, 40, 0.22) !important;
@@ -2478,14 +2478,14 @@ body {
   }
 
   .polaroidTape {
-    width: 14px;
-    height: 5px;
-    top: -3px;
+    width: 13px !important;
+    height: 5px !important;
+    top: -3px !important;
     pointer-events: none;
   }
 
   .polaroidChin {
-    display: none;
+    display: none !important;
   }
 
   /* 2. Hide diagonal streamers on mobile to eliminate visual clutter */
@@ -2493,29 +2493,32 @@ body {
     display: none !important;
   }
 
-  /* 3. Center Paper Cards — full sized, generous & comfortable */
+  /* 3. Center Paper Cards — perfectly centered between side strips with clean gutters */
   .paperCard {
-    width: min(92%, 460px) !important;
-    max-width: 460px !important;
-    padding: 30px 22px 24px !important;
+    width: calc(100% - 96px) !important;
+    max-width: 440px !important;
+    padding: 24px 16px 20px !important;
     margin-left: auto !important;
     margin-right: auto !important;
     border-radius: 12px !important;
     box-shadow: 4px 4px 0 rgba(95, 42, 58, 0.15) !important;
-    z-index: 30 !important;
+    z-index: 20 !important;
+    box-sizing: border-box !important;
   }
 
   .paperCard h1 {
-    font-size: 2.15rem !important;
+    font-size: 1.85rem !important;
+    line-height: 1.2 !important;
   }
 
   .greetingTitle {
-    font-size: 2.5rem !important;
+    font-size: 2.1rem !important;
+    line-height: 1.2 !important;
   }
 
   .greetingSubtext {
-    font-size: 1rem !important;
-    margin-top: 8px;
+    font-size: 0.95rem !important;
+    margin-top: 8px !important;
   }
 
   /* 4. Room Balloons on Mobile: scaled & non-intrusive in background */
@@ -2527,7 +2530,7 @@ body {
   }
 
   .balloonPopPrompt {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     padding: 1px 5px;
   }
 
@@ -2535,14 +2538,14 @@ body {
   .vintageSpeaker {
     left: 4px !important;
     bottom: 4px !important;
-    width: 54px !important;
+    width: 50px !important;
     z-index: 25 !important;
   }
 
   .speakerPlayPauseButton {
-    width: 30px;
-    height: 30px;
-    font-size: 0.74rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.72rem;
     left: 2px;
     bottom: 0px;
   }
@@ -2550,27 +2553,28 @@ body {
   .roomGiftStack {
     right: 4px !important;
     bottom: 4px !important;
-    width: 50px !important;
+    width: 46px !important;
     z-index: 25 !important;
   }
 
   #sceneRoomDecoration {
-    padding-top: 42px !important;
+    padding-top: 38px !important;
     padding-bottom: 12px !important;
     justify-content: flex-start !important;
     overflow-y: hidden !important;
   }
 
   .roomDecorationStatusCard {
-    width: min(92%, 420px) !important;
+    width: calc(100% - 96px) !important;
     max-width: 420px !important;
-    margin-top: 40px !important;
+    margin-top: 36px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 30 !important;
+    z-index: 20 !important;
+    box-sizing: border-box !important;
   }
 
-  /* Bunting Banner "HAPPY BIRTHDAY" on mobile: sized 100% between side photos, above cards */
+  /* Bunting Banner "HAPPY BIRTHDAY" on mobile: centered, above cards, 100% visible */
   .buntingBanner {
     top: 8px !important;
     left: 50% !important;
@@ -2578,7 +2582,7 @@ body {
     gap: 1.5px !important;
     z-index: 45 !important;
     width: max-content !important;
-    max-width: calc(100vw - 80px) !important;
+    max-width: calc(100vw - 88px) !important;
     pointer-events: none !important;
     display: flex !important;
     justify-content: center !important;
@@ -2608,15 +2612,15 @@ body {
   /* Fairy lights container on mobile */
   .fairyLightsContainer {
     top: 0px !important;
-    height: 34px !important;
+    height: 32px !important;
     z-index: 2 !important;
   }
 
   /* 6. Heart Garland & Hanging Lanterns on mobile */
   .heartGarland {
-    top: 34px !important;
-    width: calc(100vw - 84px) !important;
-    max-width: 380px !important;
+    top: 30px !important;
+    width: calc(100vw - 88px) !important;
+    max-width: 360px !important;
     transform: translateX(-50%) !important;
     left: 50% !important;
     z-index: 2 !important;
@@ -2630,26 +2634,53 @@ body {
     top: 14% !important;
   }
 
-  /* 7. Birthday Cake Card on mobile — Full size, glorious & un-shrunk */
+  /* 7. Birthday Cake Card on mobile — Full size, glorious & un-congested */
   .birthdayCakeCard {
-    width: min(92%, 420px) !important;
+    width: calc(100% - 96px) !important;
     max-width: 420px !important;
-    padding: 28px 20px 22px !important;
-    margin-top: 38px !important;
+    padding: 22px 14px 18px !important;
+    margin-top: 34px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 30 !important;
+    z-index: 20 !important;
+    box-sizing: border-box !important;
   }
 
   .birthdayCakeCard h2 {
-    font-size: 2.15rem !important;
+    font-size: 1.95rem !important;
     margin-bottom: 6px !important;
   }
 
   .cakeAssembly {
-    transform: scale(1) !important; /* Full size celebration cake */
-    margin: 18px auto 14px !important;
+    transform: none !important;
+    margin: 14px auto 10px !important;
+  }
+
+  .cakePlate {
+    width: 170px !important;
+    height: 14px !important;
+  }
+
+  .cakeTierBottom {
+    width: 144px !important;
+    height: 44px !important;
+  }
+
+  .cakeTierTop {
+    width: 108px !important;
+    height: 38px !important;
+  }
+
+  .birthdayCandle {
+    width: 11px !important;
+    height: 38px !important;
+  }
+
+  .birthdayCandleFlame {
+    width: 14px !important;
+    height: 22px !important;
+    top: -20px !important;
   }
 
   .candleBlowMicHint {
@@ -2659,46 +2690,47 @@ body {
   }
 
   #blowCandleButton {
-    padding: 11px 26px !important;
-    font-size: 0.95rem !important;
+    padding: 10px 24px !important;
+    font-size: 0.92rem !important;
     margin-top: 6px !important;
   }
 
   /* 7.5. Vintage Love Letter Envelope on mobile */
   .vintageEnvelopeContainer {
-    width: min(92%, 360px) !important;
-    max-width: 360px !important;
-    margin-top: 38px !important;
+    width: calc(100% - 96px) !important;
+    max-width: 340px !important;
+    margin-top: 34px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 30 !important;
+    z-index: 20 !important;
+    box-sizing: border-box !important;
   }
 
   .envelopeWrap {
-    height: 210px !important;
+    height: 200px !important;
   }
 
   .envelopeFlap {
-    height: 105px !important;
+    height: 100px !important;
   }
 
   .envelopeSealHeart {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 1rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.95rem !important;
   }
 
   .envelopeLetterPeek {
-    height: 170px !important;
+    height: 160px !important;
   }
 
   .vintageEnvelopeContainer.isOpen .envelopeLetterPeek {
-    transform: translateY(-80px) !important;
+    transform: translateY(-75px) !important;
   }
 
   .envelopeToText {
-    font-size: 1.55rem !important;
+    font-size: 1.45rem !important;
   }
 
   .envelopeFromText {
@@ -2711,29 +2743,31 @@ body {
     margin-top: 6px !important;
   }
 
-  /* 8. Vintage Love Letter Card on mobile — Full size, spacious & authentic */
+  /* 8. Vintage Love Letter Card on mobile — Full size, spacious & un-congested */
   #finalMessageCard {
-    width: min(94%, 520px) !important;
-    max-width: 520px !important;
-    max-height: calc(100dvh - 54px) !important;
-    padding: 28px 22px 24px !important;
-    margin-top: 38px !important;
+    width: calc(100% - 96px) !important;
+    max-width: 440px !important;
+    max-height: calc(100dvh - 58px) !important;
+    padding: 24px 16px 20px !important;
+    margin-top: 34px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    z-index: 30 !important;
+    z-index: 20 !important;
+    box-sizing: border-box !important;
   }
 
   .vintageLetterTitle {
-    font-size: 2.15rem !important;
+    font-size: 1.95rem !important;
     margin-top: 4px;
     margin-bottom: 4px;
     line-height: 1.2;
   }
 
   #finalMessageCard .daysCounterBadge {
-    font-size: 0.84rem !important;
+    font-size: 0.82rem !important;
     padding: 4px 10px !important;
     margin: 6px auto 10px !important;
   }
@@ -2743,14 +2777,14 @@ body {
   }
 
   #finalMessageCard .birthdayMessageTextContainer {
-    font-size: 1.30rem !important;
-    line-height: 1.70 !important;
-    margin-top: 14px !important;
+    font-size: 1.24rem !important;
+    line-height: 1.68 !important;
+    margin-top: 12px !important;
   }
 
   #finalMessageCard .signatureLine {
-    font-size: 2.35rem !important;
-    margin-top: 18px !important;
+    font-size: 2.15rem !important;
+    margin-top: 16px !important;
   }
 
   /* 9. Hide floating emojis around letter on mobile to prevent clutter */
@@ -2761,79 +2795,80 @@ body {
 
   /* 10. Sticky Notes Deck on mobile */
   .stickyNotesSection {
-    margin-top: 18px;
-    margin-bottom: 14px;
+    margin-top: 18px !important;
+    margin-bottom: 12px !important;
   }
 
   .stickyNotesHeader {
-    font-size: 1.30rem;
-    margin-bottom: 8px;
+    font-size: 1.25rem !important;
+    margin-bottom: 8px !important;
   }
 
   .stickyNotesDeck {
-    width: 100%;
-    max-width: 310px;
+    width: 100% !important;
+    max-width: 280px !important;
+    margin: 0 auto !important;
   }
 
   .stickyNoteCard {
-    padding: 16px 14px 12px;
-    min-height: 115px;
+    padding: 14px 12px 10px !important;
+    min-height: 105px !important;
   }
 
   .stickyNoteText {
-    font-size: 0.98rem;
-    line-height: 1.50;
-    margin: 8px 0 10px;
+    font-size: 0.95rem !important;
+    line-height: 1.48 !important;
+    margin: 8px 0 10px !important;
   }
 
   .stickyNoteTapPrompt {
-    font-size: 0.88rem;
+    font-size: 0.85rem !important;
   }
 
   /* 11. Cassette player on mobile */
   .retroCassettePlayer {
-    width: 100%;
-    max-width: 290px;
-    margin: 16px auto 10px;
-    padding: 8px 12px;
+    width: 100% !important;
+    max-width: 270px !important;
+    margin: 16px auto 10px !important;
+    padding: 8px 12px !important;
   }
 
   .cassetteHeader {
-    font-size: 0.78rem;
-    margin-bottom: 4px;
+    font-size: 0.78rem !important;
+    margin-bottom: 4px !important;
   }
 
   .cassetteBody {
-    height: 52px;
-    padding: 3px 8px;
+    height: 52px !important;
+    padding: 3px 8px !important;
   }
 
   .cassettePlayButton {
-    padding: 7px 16px;
-    font-size: 0.84rem;
-    margin-top: 6px;
+    padding: 7px 16px !important;
+    font-size: 0.84rem !important;
+    margin-top: 6px !important;
   }
 
   /* 12. Replay button */
   .replayExperienceButton {
-    margin-top: 12px;
-    padding: 8px 20px;
-    font-size: 0.84rem;
+    margin-top: 12px !important;
+    padding: 8px 20px !important;
+    font-size: 0.84rem !important;
   }
 
   /* 13. Enlarged Photo Preview on mobile — centered gracefully */
   .photoZoomPreview {
-    z-index: 10000 !important;
-    width: min(84vw, 290px) !important;
+    z-index: 99995 !important;
+    width: min(84vw, 295px) !important;
     max-width: 300px !important;
-    padding: 10px 10px 20px 10px !important;
+    padding: 10px 10px 16px 10px !important;
     touch-action: manipulation !important;
   }
 
   .photoZoomPreview.isVisible {
     pointer-events: auto !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
-    transform: translate(-50%, -50%) scale(1) !important;
+    transform: translate3d(-50%, -50%, 0) scale(1) !important;
   }
 }
 

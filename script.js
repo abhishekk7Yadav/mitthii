@@ -316,40 +316,57 @@ function initializePhotoStripZoomPreview() {
     '<img class="polaroidZoomImg" src="" alt="Mitthi">' +
     '</div>' +
     '<div class="polaroidZoomChin" id="polaroidZoomChin">Mitthi 💖</div>' +
-    '<span class="polaroidZoomCloseHint">tap to close 💕</span>';
+    '<span class="polaroidZoomCloseHint">tap anywhere to close 💕</span>';
   document.body.appendChild(zoomPreview);
 
   const zoomImg = zoomPreview.querySelector('.polaroidZoomImg');
   const zoomChin = zoomPreview.querySelector('#polaroidZoomChin');
   let activeSourceCard = null;
+  let openedAtTimestamp = 0;
+  let isClosing = false;
 
   function dismissPreview(event) {
     if (event && typeof event.stopPropagation === 'function') {
       event.stopPropagation();
     }
+    // Prevent closing if opened within last 240ms (avoids mobile ghost click from the opening tap)
+    if (Date.now() - openedAtTimestamp < 240) return;
+    if (isClosing || !zoomPreview.classList.contains('isVisible')) return;
+    isClosing = true;
+
     backdrop.classList.remove('isVisible');
     zoomPreview.classList.remove('isVisible');
 
-    // Resume scrolling tracks smoothly
-    document.querySelectorAll('.photoStripTrack').forEach(function (track) {
-      track.style.animationPlayState = 'running';
-    });
+    setTimeout(function () {
+      // Resume scrolling tracks smoothly after modal finishes closing
+      document.querySelectorAll('.photoStripTrack').forEach(function (track) {
+        track.style.animationPlayState = 'running';
+      });
 
-    if (activeSourceCard) {
-      activeSourceCard.classList.remove('isSelectedSourcePhoto');
-      activeSourceCard = null;
-    }
+      if (activeSourceCard) {
+        activeSourceCard.classList.remove('isSelectedSourcePhoto');
+        activeSourceCard = null;
+      }
+      isClosing = false;
+    }, 280);
   }
 
   // Dismiss on clicking backdrop
   backdrop.addEventListener('click', dismissPreview);
 
-  // Dismiss on clicking close button or anywhere on the preview card
+  // Dismiss on clicking the enlarged card itself (anywhere on photo, chin, or frame)
   zoomPreview.addEventListener('click', dismissPreview);
 
+  // Dismiss on close button
   const closeBtn = zoomPreview.querySelector('#polaroidZoomCloseBtn');
   if (closeBtn) {
     closeBtn.addEventListener('click', dismissPreview);
+  }
+
+  // Dismiss on clicking the close hint prompt
+  const closeHint = zoomPreview.querySelector('.polaroidZoomCloseHint');
+  if (closeHint) {
+    closeHint.addEventListener('click', dismissPreview);
   }
 
   // Close on Escape key
@@ -359,7 +376,7 @@ function initializePhotoStripZoomPreview() {
 
   function openEnlargedCard(card) {
     const img = card.querySelector('img');
-    if (!img) return;
+    if (!img || isClosing) return;
 
     if (activeSourceCard) {
       activeSourceCard.classList.remove('isSelectedSourcePhoto');
@@ -376,6 +393,7 @@ function initializePhotoStripZoomPreview() {
     const caption = card.dataset.caption || 'Mitthi 💖';
     zoomChin.textContent = caption;
 
+    openedAtTimestamp = Date.now();
     backdrop.classList.add('isVisible');
     zoomPreview.classList.add('isVisible');
   }
@@ -392,8 +410,6 @@ function initializePhotoStripZoomPreview() {
       }
     });
   });
-
-
 }
 initializePhotoStripZoomPreview();
 
