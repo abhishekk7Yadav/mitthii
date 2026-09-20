@@ -6,7 +6,7 @@ const birthMonth = 9;
 const birthDay = 21;
 
 const vintageSpeakerAudioTrackUrl = ""; // e.g. "happy-birthday-instrumental.mp3"
-const voiceNoteAudioUrl = ""; // e.g. "voice-note.mp3" (optional: place your voice recording here!)
+const voiceNoteAudioUrl = "assets/audio/bdy_mitthii.mp3";
 
 const girlfriendPhotoUrls = [
   { url: "assets/images/mitthii/IMG-20260829-WA0001.webp", caption: "Mitthi 💕" },
@@ -1862,12 +1862,55 @@ function handleReplayClick() {
    ============================================================ */
 let voiceNoteIsPlaying = false;
 
+function initVoiceNoteAudio() {
+  const audioElement = document.getElementById('voiceNoteAudioElement');
+  const durationEl = document.getElementById('cassetteDuration');
+  if (!audioElement || !voiceNoteAudioUrl) return;
+
+  if (!audioElement.src || !audioElement.src.includes('bdy_mitthii')) {
+    audioElement.src = voiceNoteAudioUrl;
+    audioElement.preload = 'metadata';
+  }
+
+  audioElement.onloadedmetadata = function () {
+    if (audioElement.duration && !isNaN(audioElement.duration) && durationEl) {
+      const totSec = Math.floor(audioElement.duration);
+      const totM = Math.floor(totSec / 60);
+      const totS = totSec % 60;
+      durationEl.textContent = '0:00 / ' + totM + ':' + (totS < 10 ? '0' : '') + totS;
+    }
+  };
+
+  audioElement.ontimeupdate = function () {
+    if (audioElement.duration && !isNaN(audioElement.duration) && durationEl) {
+      const curSec = Math.floor(audioElement.currentTime);
+      const totSec = Math.floor(audioElement.duration);
+      const curM = Math.floor(curSec / 60);
+      const curS = curSec % 60;
+      const totM = Math.floor(totSec / 60);
+      const totS = totSec % 60;
+      durationEl.textContent =
+        curM + ':' + (curS < 10 ? '0' : '') + curS + ' / ' +
+        totM + ':' + (totS < 10 ? '0' : '') + totS;
+    }
+  };
+
+  audioElement.onended = function () {
+    voiceNoteIsPlaying = false;
+    const cassetteEl = document.getElementById('retroCassettePlayer');
+    const playIcon = document.getElementById('cassettePlayIcon');
+    const playText = document.getElementById('cassettePlayText');
+    if (cassetteEl) cassetteEl.classList.remove('isPlaying');
+    if (playIcon) playIcon.textContent = '▶';
+    if (playText) playText.textContent = 'Listen again 💕';
+  };
+}
+
 function toggleVoiceNotePlayback() {
   const cassetteEl = document.getElementById('retroCassettePlayer');
   const playIcon = document.getElementById('cassettePlayIcon');
   const playText = document.getElementById('cassettePlayText');
   const audioElement = document.getElementById('voiceNoteAudioElement');
-  const durationEl = document.getElementById('cassetteDuration');
 
   if (!voiceNoteAudioUrl) {
     const bubble = document.createElement('div');
@@ -1880,42 +1923,33 @@ function toggleVoiceNotePlayback() {
     return;
   }
 
-  if (!audioElement.src) {
-    audioElement.src = voiceNoteAudioUrl;
-    audioElement.ontimeupdate = function () {
-      if (audioElement.duration && !isNaN(audioElement.duration)) {
-        const curSec = Math.floor(audioElement.currentTime);
-        const totSec = Math.floor(audioElement.duration);
-        const curM = Math.floor(curSec / 60);
-        const curS = curSec % 60;
-        const totM = Math.floor(totSec / 60);
-        const totS = totSec % 60;
-        durationEl.textContent =
-          curM + ':' + (curS < 10 ? '0' : '') + curS + ' / ' +
-          totM + ':' + (totS < 10 ? '0' : '') + totS;
-      }
-    };
-    audioElement.onended = function () {
-      voiceNoteIsPlaying = false;
-      cassetteEl.classList.remove('isPlaying');
-      playIcon.textContent = '▶';
-      playText.textContent = 'Listen again 💕';
-    };
+  if (!audioElement.src || !audioElement.src.includes('bdy_mitthii')) {
+    initVoiceNoteAudio();
   }
 
   voiceNoteIsPlaying = !voiceNoteIsPlaying;
   if (voiceNoteIsPlaying) {
-    audioElement.play().catch(function () { });
-    cassetteEl.classList.add('isPlaying');
-    playIcon.textContent = '⏸';
-    playText.textContent = 'Pause voice note';
+    // If background music is playing, pause so voice is crystal clear
+    const bgSpeaker = document.getElementById('vintageSpeakerAudioElement');
+    if (bgSpeaker && !bgSpeaker.paused) {
+      bgSpeaker.pause();
+    }
+    audioElement.play().catch(function (err) {
+      console.warn('Voice note playback error:', err);
+    });
+    if (cassetteEl) cassetteEl.classList.add('isPlaying');
+    if (playIcon) playIcon.textContent = '⏸';
+    if (playText) playText.textContent = 'Pause voice note';
   } else {
     audioElement.pause();
-    cassetteEl.classList.remove('isPlaying');
-    playIcon.textContent = '▶';
-    playText.textContent = 'play this 💕';
+    if (cassetteEl) cassetteEl.classList.remove('isPlaying');
+    if (playIcon) playIcon.textContent = '▶';
+    if (playText) playText.textContent = 'play this 💕';
   }
 }
+
+// Auto-initialize metadata so total audio duration is visible
+initVoiceNoteAudio();
 
 /* ============================================================
    Cursor heart trail — tiny hearts drift out from wherever the
