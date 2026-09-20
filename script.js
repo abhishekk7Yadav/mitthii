@@ -1878,7 +1878,7 @@ function initVoiceNoteAudio() {
   if (!audioElement) return;
 
   if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
-    audioElement.src = 'bdy_mitthii.mp3';
+    audioElement.src = './assets/audio/bdy_mitthii.mp3';
   }
   audioElement.volume = 1.0;
 
@@ -1951,7 +1951,7 @@ function toggleVoiceNotePlayback() {
   if (!audioElement) return;
 
   if (!audioElement.src || audioElement.src === '' || audioElement.src === window.location.href) {
-    audioElement.src = 'bdy_mitthii.mp3';
+    audioElement.src = './assets/audio/bdy_mitthii.mp3';
   }
   audioElement.volume = 1.0;
 
@@ -1982,8 +1982,8 @@ function toggleVoiceNotePlayback() {
   if (startPlayback !== undefined) {
     startPlayback
       .catch(function (err) {
-        console.warn('Primary bdy_mitthii.mp3 failed, trying assets fallback:', err);
-        audioElement.src = 'assets/audio/bdy_mitthii.mp3';
+        console.warn('Primary ./assets/audio/bdy_mitthii.mp3 failed, trying root fallback:', err);
+        audioElement.src = './bdy_mitthii.mp3';
         audioElement.load();
         audioElement.play()
           .catch(function (fallbackErr) {
