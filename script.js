@@ -1319,12 +1319,31 @@ function spawnCandleSmoke() {
 }
 
 /* ============================================================
-   Birthday candle blow handler (tap button or candle to blow)
+   Birthday candle blow handler & interactive cake cut handlers
    ============================================================ */
+let isCakeCutInProgress = false;
+
+function handleCakeAssemblyClick(event) {
+  const cakeAssembly = document.getElementById('cakeAssembly');
+  if (!cakeAssembly) return;
+  if (!cakeAssembly.classList.contains('isCandleBlownOut')) {
+    handleBlowCandleClick();
+  } else if (cakeAssembly.classList.contains('isReadyToCut') && !cakeAssembly.classList.contains('isCakeCut')) {
+    handleCutCakeClick(event);
+  }
+}
+
+function handleCakeSliceHover() {
+  const cakeAssembly = document.getElementById('cakeAssembly');
+  if (cakeAssembly && cakeAssembly.classList.contains('isReadyToCut') && !cakeAssembly.classList.contains('isCakeCut')) {
+    handleCutCakeClick();
+  }
+}
+
 function handleBlowCandleClick() {
   const cakeAssembly = document.getElementById('cakeAssembly');
   const blowButton = document.getElementById('blowCandleButton');
-  if (cakeAssembly.classList.contains('isCandleBlownOut')) return;
+  if (!cakeAssembly || cakeAssembly.classList.contains('isCandleBlownOut')) return;
 
   // Restore ambient lighting for celebration
   const roomDeco = document.getElementById('sceneRoomDecoration');
@@ -1340,10 +1359,15 @@ function handleBlowCandleClick() {
 
   // 1. Blow the candle out first
   cakeAssembly.classList.add('isCandleBlownOut');
-  blowButton.style.pointerEvents = 'none';
-  blowButton.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-  blowButton.style.opacity = '0';
-  blowButton.style.transform = 'scale(0.88)';
+  if (blowButton) {
+    blowButton.style.pointerEvents = 'none';
+    blowButton.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    blowButton.style.opacity = '0';
+    blowButton.style.transform = 'scale(0.88)';
+    setTimeout(function () {
+      blowButton.style.display = 'none';
+    }, 420);
+  }
 
   // 2. Rising smoke wisps from the extinguished candle
   spawnCandleSmoke();
@@ -1358,10 +1382,115 @@ function handleBlowCandleClick() {
     }, 450);
   }
 
-  // 4. Keep the cake with the blown candle visible for 3.6s so she can celebrate her wish, then transition to letter
+  // 4. After the candle is blown, present the cake cutting phase!
   setTimeout(function () {
-    transitionCakeCardToFinalMessage();
-  }, 3600);
+    prepareCakeForCutting();
+  }, 1100);
+}
+
+function prepareCakeForCutting() {
+  const cakeAssembly = document.getElementById('cakeAssembly');
+  if (!cakeAssembly) return;
+
+  cakeAssembly.classList.add('isReadyToCut');
+
+  // Smoothly morph card title to cake cut prompt
+  const title = document.getElementById('birthdayCakeTitle');
+  if (title) {
+    title.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    title.style.opacity = '0';
+    title.style.transform = 'scale(0.95)';
+    setTimeout(function () {
+      title.textContent = 'Cut the birthday cake! 🎂✨';
+      title.style.opacity = '1';
+      title.style.transform = 'scale(1)';
+    }, 300);
+  }
+
+  // Update hint to guide her to hover or tap the slice
+  const micHint = document.getElementById('candleBlowMicHint');
+  if (micHint) {
+    micHint.textContent = '✨ Hover or tap the slice to cut 🔪🍰';
+    micHint.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    micHint.style.opacity = '1';
+    micHint.style.transform = 'scale(1)';
+  }
+
+  // Reveal cut cake button for mobile / direct action
+  const cutButton = document.getElementById('cutCakeButton');
+  if (cutButton) {
+    cutButton.style.display = 'inline-block';
+    cutButton.style.opacity = '0';
+    cutButton.style.transform = 'scale(0.88)';
+    void cutButton.offsetWidth;
+    cutButton.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    cutButton.style.opacity = '1';
+    cutButton.style.transform = 'scale(1)';
+  }
+}
+
+function handleCutCakeClick(event) {
+  if (event && event.stopPropagation) event.stopPropagation();
+  const cakeAssembly = document.getElementById('cakeAssembly');
+  if (!cakeAssembly) return;
+  if (!cakeAssembly.classList.contains('isReadyToCut') || cakeAssembly.classList.contains('isCakeCut') || isCakeCutInProgress) {
+    return;
+  }
+  isCakeCutInProgress = true;
+
+  // 1. Play swift, satisfying knife slice animation through the cut line
+  const knifeGuide = document.getElementById('cakeKnifeGuide');
+  if (knifeGuide) {
+    knifeGuide.classList.add('isSlicing');
+  }
+
+  // 2. Slicing separates the slice piece and pops celebratory confetti
+  setTimeout(function () {
+    cakeAssembly.classList.add('isCakeCut');
+
+    // Celebratory confetti on cake cut
+    if (window.confetti) {
+      confetti({
+        particleCount: 85,
+        spread: 75,
+        origin: { y: 0.54 },
+        colors: ['#ff758c', '#ff7eb3', '#ffcad4', '#ffd166', '#06d6a0', '#ffffff']
+      });
+      setTimeout(function () {
+        if (window.confetti) {
+          confetti({
+            particleCount: 45,
+            spread: 60,
+            origin: { y: 0.58 }
+          });
+        }
+      }, 300);
+    }
+
+    // Update title to joyful celebration
+    const title = document.getElementById('birthdayCakeTitle');
+    if (title) {
+      title.textContent = 'Yay! First bite for Mitthi! 🍰💖';
+    }
+
+    const micHint = document.getElementById('candleBlowMicHint');
+    if (micHint) {
+      micHint.textContent = 'Happy Birthday my love! 💖✨';
+    }
+
+    const cutButton = document.getElementById('cutCakeButton');
+    if (cutButton) {
+      cutButton.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      cutButton.style.opacity = '0';
+      cutButton.style.transform = 'scale(0.88)';
+      cutButton.style.pointerEvents = 'none';
+    }
+
+    // 3. Keep cut cake on screen for 3.6s so she can admire the slice, then transition to letter
+    setTimeout(function () {
+      transitionCakeCardToFinalMessage();
+    }, 3600);
+  }, 380);
 }
 
 function transitionCakeCardToFinalMessage() {
@@ -1698,7 +1827,23 @@ function handleReplayClick() {
   const roomDeco = document.getElementById('sceneRoomDecoration');
   if (roomDeco) roomDeco.classList.add('isLightsDimmed');
 
-  cakeAssembly.classList.remove('isCandleBlownOut');
+  isCakeCutInProgress = false;
+  cakeAssembly.classList.remove('isCandleBlownOut', 'isReadyToCut', 'isCakeCut');
+  const knifeGuide = document.getElementById('cakeKnifeGuide');
+  if (knifeGuide) knifeGuide.classList.remove('isSlicing');
+  const cakeTitle = document.getElementById('birthdayCakeTitle');
+  if (cakeTitle) cakeTitle.textContent = 'Make a wish 🎂✨';
+  if (micHint) {
+    micHint.textContent = '✨ Make a wish & tap below 🎂💕';
+  }
+  const cutButton = document.getElementById('cutCakeButton');
+  if (cutButton) {
+    cutButton.style.display = 'none';
+    cutButton.style.opacity = '';
+    cutButton.style.transform = '';
+    cutButton.style.pointerEvents = '';
+  }
+
   const blowButton = document.getElementById('blowCandleButton');
   blowButton.style.display = '';
   blowButton.style.pointerEvents = '';
