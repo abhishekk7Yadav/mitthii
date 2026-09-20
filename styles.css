@@ -54,11 +54,13 @@ body {
   border: 2px solid var(--color-ink);
   border-radius: 8px;
   padding: 40px 30px;
-  max-width: 460px;
-  width: 90%;
+  max-width: min(440px, calc(100vw - 160px));
+  width: calc(100% - 160px);
+  margin-left: auto;
+  margin-right: auto;
   box-shadow: 8px 8px 0 rgba(95, 42, 58, 0.16);
   transform: rotate(-1deg);
-  z-index: 4;
+  z-index: 30;
 }
 
 .washiTapeAccent {
@@ -283,9 +285,9 @@ body {
   position: fixed;
   top: 0;
   bottom: 0;
-  width: 86px;
+  width: 66px;
   overflow: hidden;
-  z-index: 20;
+  z-index: 10;
   opacity: 0;
   contain: layout style paint;
   transform: translate3d(0, 0, 0);
@@ -309,8 +311,8 @@ body {
 .photoStripTrack {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  padding: 16px 8px;
+  gap: 24px;
+  padding: 14px 6px;
   animation-name: scrollPhotosBottomToTop;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
@@ -346,9 +348,9 @@ body {
 /* Polaroid card thumbnail */
 .polaroidCard {
   position: relative;
-  width: 68px;
+  width: 54px;
   background: #FFFDF9;
-  padding: 5px 5px 12px 5px;
+  padding: 4px 4px 10px 4px;
   border-radius: 2px;
   box-shadow: 0 4px 10px rgba(50, 30, 40, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -358,6 +360,7 @@ body {
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(.34, 1.56, .64, 1), box-shadow 0.25s ease;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .polaroidCard[data-tilt="left"] {
@@ -441,92 +444,37 @@ body {
 }
 
 /* Enlarged Polaroid Zoom Preview — Connected directly to clicked photo */
+/* Enlarged Polaroid Zoom Preview — Centered gracefully */
 .photoZoomPreview {
-  position: fixed;
-  width: 235px;
-  max-width: calc(100vw - 64px);
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(0.7) !important;
+  width: min(84vw, 295px) !important;
+  max-width: 320px;
   background: #FFFDF9;
   border: 1.5px solid rgba(58, 43, 32, 0.22);
   border-radius: 8px;
-  padding: 10px 10px 22px 10px;
-  box-shadow: 0 16px 42px rgba(40, 20, 30, 0.45), 0 4px 14px rgba(0, 0, 0, 0.18);
-  z-index: 9999;
+  padding: 10px 10px 20px 10px;
+  box-shadow: 0 20px 55px rgba(40, 20, 30, 0.48), 0 4px 14px rgba(0, 0, 0, 0.18);
+  z-index: 99999 !important;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  transform: scale(0.65);
-  transition:
-    opacity 0.22s ease,
-    visibility 0.22s ease,
-    transform 0.28s cubic-bezier(.34, 1.45, .64, 1);
+  transition: opacity 0.24s ease, visibility 0.24s ease, transform 0.28s cubic-bezier(.34, 1.56, .64, 1) !important;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .photoZoomPreview.isVisible {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
-  transform: scale(1) !important;
-}
-
-/* Callout connector notch pointing back to source thumbnail */
-.photoZoomPreview.connectedLeft::before {
-  content: '';
-  position: absolute;
-  left: -12px;
-  top: var(--connectorY, 50%);
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 12px solid #FFFDF9;
-  z-index: 5;
-}
-
-.photoZoomPreview.connectedLeft::after {
-  content: '';
-  position: absolute;
-  left: -14px;
-  top: var(--connectorY, 50%);
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
-  border-right: 13px solid rgba(58, 43, 32, 0.28);
-  z-index: 4;
-}
-
-.photoZoomPreview.connectedRight::before {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: var(--connectorY, 50%);
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 12px solid #FFFDF9;
-  z-index: 5;
-}
-
-.photoZoomPreview.connectedRight::after {
-  content: '';
-  position: absolute;
-  right: -14px;
-  top: var(--connectorY, 50%);
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 11px solid transparent;
-  border-bottom: 11px solid transparent;
-  border-left: 13px solid rgba(58, 43, 32, 0.28);
-  z-index: 4;
+  transform: translate(-50%, -50%) scale(1) !important;
 }
 
 /* Glowing ring on the clicked source polaroid on the strip */
@@ -763,22 +711,33 @@ body {
 /* bunting banner */
 .buntingBanner {
   position: absolute;
-  top: 6%;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 4px;
-  z-index: 2;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  z-index: 45 !important;
+  width: max-content;
+  max-width: calc(100vw - 150px);
+  pointer-events: none;
+}
+
+.buntingSpacer {
+  width: 8px;
+  flex-shrink: 0;
 }
 
 .buntingFlagWrap {
   display: flex;
   align-items: flex-start;
+  flex-shrink: 0;
 }
 
 .buntingFlag {
-  width: 26px;
-  height: 30px;
+  width: 20px;
+  height: 25px;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   transform-origin: top center;
   opacity: 0;
@@ -786,11 +745,14 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 4px;
+  padding-top: 3px;
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 @keyframes buntingAppear {
@@ -2443,21 +2405,21 @@ body {
     padding: 12px 6px;
   }
 
-  /* 1. Side photo strips on mobile: slim, elegant, floating smoothly on left and right */
+  /* 1. Side photo strips on mobile: ultra slim, floating on left and right borders */
   .photoStrip {
     display: block !important;
-    width: 48px;
-    z-index: 25 !important;
+    width: 38px !important;
+    z-index: 10 !important;
     opacity: 0;
     pointer-events: auto !important;
   }
 
   .photoStrip.left {
-    left: 0;
+    left: 0 !important;
   }
 
   .photoStrip.right {
-    right: 0;
+    right: 0 !important;
   }
 
   .photoStrip.isRevealed {
@@ -2466,8 +2428,8 @@ body {
   }
 
   .photoStripTrack {
-    padding: 8px 2px;
-    gap: 14px;
+    padding: 6px 1px !important;
+    gap: 12px !important;
   }
 
   .photoStrip.left .photoStripTrack {
@@ -2479,21 +2441,22 @@ body {
   }
 
   .polaroidCard {
-    width: 42px;
-    padding: 4px 3px 6px 3px;
-    border-radius: 2px;
-    box-shadow: 0 2px 6px rgba(50, 30, 40, 0.22);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #FFFDF9;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 32px !important;
+    padding: 3px 2px 5px 2px !important;
+    border-radius: 2px !important;
+    box-shadow: 0 2px 5px rgba(50, 30, 40, 0.22) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    background: #FFFDF9 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    touch-action: manipulation !important;
   }
 
   .polaroidCard:hover,
   .polaroidCard:active {
-    transform: scale(1.1) rotate(0deg) !important;
+    transform: scale(1.08) rotate(0deg) !important;
   }
 
   .polaroidPhotoWrap {
@@ -2510,17 +2473,18 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    pointer-events: none;
   }
 
   .polaroidTape {
-    width: 16px;
-    height: 6px;
+    width: 14px;
+    height: 5px;
     top: -3px;
+    pointer-events: none;
   }
 
   .polaroidChin {
     display: none;
-    /* miniature caption hidden on mobile track, opens enlarged with full caption on tap! */
   }
 
   /* 2. Hide diagonal streamers on mobile to eliminate visual clutter */
@@ -2528,15 +2492,16 @@ body {
     display: none !important;
   }
 
-  /* 3. Center Paper Cards — sized calc(100% - 98px) so they NEVER collide with side strips */
+  /* 3. Center Paper Cards — placed strictly between side strips, z-index 35 */
   .paperCard {
-    width: calc(100% - 98px);
-    max-width: 320px;
-    padding: 22px 14px 18px;
-    margin: auto;
-    border-radius: 12px;
-    box-shadow: 4px 4px 0 rgba(95, 42, 58, 0.15);
-    z-index: 5;
+    width: calc(100% - 84px) !important;
+    max-width: 320px !important;
+    padding: 20px 14px 16px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: 12px !important;
+    box-shadow: 4px 4px 0 rgba(95, 42, 58, 0.15) !important;
+    z-index: 35 !important;
   }
 
   .paperCard h1 {
@@ -2569,14 +2534,14 @@ body {
   .vintageSpeaker {
     left: 4px !important;
     bottom: 4px !important;
-    width: 58px !important;
-    z-index: 4;
+    width: 54px !important;
+    z-index: 25 !important;
   }
 
   .speakerPlayPauseButton {
-    width: 32px;
-    height: 32px;
-    font-size: 0.76rem;
+    width: 30px;
+    height: 30px;
+    font-size: 0.74rem;
     left: 2px;
     bottom: 0px;
   }
@@ -2584,53 +2549,73 @@ body {
   .roomGiftStack {
     right: 4px !important;
     bottom: 4px !important;
-    width: 54px !important;
-    z-index: 4;
+    width: 50px !important;
+    z-index: 25 !important;
   }
 
   #sceneRoomDecoration {
-    padding-top: 54px !important;
+    padding-top: 46px !important;
     padding-bottom: 12px !important;
     justify-content: flex-start !important;
     overflow-y: hidden !important;
   }
 
-  /* Bunting Banner "HAPPY BIRTHDAY" on mobile: sized to fit 100% between side photos, above cards */
+  .roomDecorationStatusCard {
+    width: calc(100% - 84px) !important;
+    max-width: 310px !important;
+    margin-top: 48px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    z-index: 35 !important;
+  }
+
+  /* Bunting Banner "HAPPY BIRTHDAY" on mobile: sized 100% between side photos, above cards */
   .buntingBanner {
     top: 8px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    gap: 2.5px !important;
-    z-index: 6 !important;
+    gap: 1.5px !important;
+    z-index: 45 !important;
     width: max-content !important;
-    max-width: calc(100vw - 92px) !important;
-    pointer-events: none;
+    max-width: calc(100vw - 80px) !important;
+    pointer-events: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+
+  .buntingFlagWrap {
+    display: flex !important;
+    align-items: flex-start !important;
+    flex-shrink: 0 !important;
   }
 
   .buntingFlag {
-    width: 17px !important;
-    height: 22px !important;
-    font-size: 0.52rem !important;
+    width: 14px !important;
+    height: 19px !important;
+    font-size: 0.49rem !important;
     font-weight: 800 !important;
     padding-top: 2px !important;
+    flex-shrink: 0 !important;
   }
 
-  .buntingBanner > div[style*="width: 10px"],
-  .buntingBanner > div:nth-child(7) {
-    width: 6px !important;
+  .buntingSpacer {
+    width: 4px !important;
+    flex-shrink: 0 !important;
   }
 
   /* Fairy lights container on mobile */
   .fairyLightsContainer {
     top: 0px !important;
-    height: 36px !important;
+    height: 34px !important;
     z-index: 2 !important;
   }
 
   /* 6. Heart Garland & Hanging Lanterns on mobile */
   .heartGarland {
-    top: 36px !important;
-    width: calc(100vw - 96px) !important;
+    top: 34px !important;
+    width: calc(100vw - 84px) !important;
+    max-width: 380px !important;
     transform: translateX(-50%) !important;
     left: 50% !important;
     z-index: 2 !important;
@@ -2646,12 +2631,14 @@ body {
 
   /* 7. Birthday Cake Card on mobile */
   .birthdayCakeCard {
-    width: calc(100% - 98px) !important;
+    width: calc(100% - 84px) !important;
     max-width: 310px !important;
-    padding: 14px 12px 14px !important;
-    margin-top: 8px !important;
+    padding: 12px 10px 12px !important;
+    margin-top: 44px !important;
     margin-bottom: auto !important;
-    z-index: 5 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    z-index: 35 !important;
   }
 
   .birthdayCakeCard h2 {
@@ -2660,7 +2647,7 @@ body {
   }
 
   .cakeAssembly {
-    transform: scale(0.76);
+    transform: scale(0.74);
     margin: 2px auto;
   }
 
@@ -2678,11 +2665,13 @@ body {
 
   /* 7.5. Vintage Love Letter Envelope on mobile */
   .vintageEnvelopeContainer {
-    width: calc(100% - 98px) !important;
+    width: calc(100% - 84px) !important;
     max-width: 290px !important;
-    margin-top: 24px !important;
+    margin-top: 44px !important;
     margin-bottom: auto !important;
-    z-index: 6 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    z-index: 35 !important;
   }
 
   .envelopeWrap {
@@ -2723,14 +2712,16 @@ body {
 
   /* 8. Vintage Love Letter Card on mobile */
   #finalMessageCard {
-    width: calc(100% - 98px) !important;
+    width: calc(100% - 84px) !important;
     max-width: 325px !important;
-    max-height: calc(100dvh - 72px) !important;
-    padding: 20px 12px 18px !important;
-    margin-top: 6px !important;
+    max-height: calc(100dvh - 66px) !important;
+    padding: 16px 12px 16px !important;
+    margin-top: 44px !important;
     margin-bottom: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    z-index: 5 !important;
+    z-index: 35 !important;
   }
 
   .vintageLetterTitle {
@@ -2820,6 +2811,7 @@ body {
 
   .scrapbookCard {
     padding: 4px 4px 8px 4px;
+    touch-action: manipulation;
   }
 
   .scrapbookChin {
@@ -2858,17 +2850,19 @@ body {
     font-size: 0.78rem;
   }
 
-  /* 13. Enlarged Photo Preview on mobile — connected to clicked photo */
+  /* 13. Enlarged Photo Preview on mobile — centered gracefully */
   .photoZoomPreview {
-    z-index: 10000;
-    width: 210px !important;
-    max-width: calc(100vw - 58px) !important;
-    padding: 8px 8px 18px 8px;
+    z-index: 10000 !important;
+    width: min(84vw, 280px) !important;
+    max-width: 290px !important;
+    padding: 8px 8px 18px 8px !important;
+    touch-action: manipulation !important;
   }
 
   .photoZoomPreview.isVisible {
     pointer-events: auto !important;
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+    transform: translate(-50%, -50%) scale(1) !important;
   }
 }
 

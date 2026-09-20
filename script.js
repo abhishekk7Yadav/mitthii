@@ -284,11 +284,12 @@ function fillPhotoStripWithPlaceholders(trackElement, side) {
   trackElement.innerHTML = doubledForSeamlessLoop
     .map(function (item, index) {
       const tilt = index % 2 === 0 ? 'left' : 'right';
+      const loadingAttr = index < 4 ? 'eager' : 'lazy';
       return (
         '<div class="polaroidCard" data-tilt="' + tilt + '" data-caption="' + item.label + '">' +
         '<div class="polaroidTape"></div>' +
         '<div class="polaroidPhotoWrap">' +
-        '<img src="' + item.url + '" alt="Mitthi" loading="eager">' +
+        '<img src="' + item.url + '" alt="Mitthi" loading="' + loadingAttr + '" decoding="async">' +
         '</div>' +
         '<div class="polaroidChin">' + item.label + '</div>' +
         '</div>'
@@ -299,32 +300,6 @@ function fillPhotoStripWithPlaceholders(trackElement, side) {
 fillPhotoStripWithPlaceholders(document.getElementById('leftPhotoStripTrack'), 'left');
 fillPhotoStripWithPlaceholders(document.getElementById('rightPhotoStripTrack'), 'right');
 
-/* ============================================================
-   Scrapbook Grid: All 30 photo moments
-   ============================================================ */
-function populateScrapbookGrid() {
-  const grid = document.getElementById('scrapbookGrid');
-  if (!grid || !girlfriendPhotoUrls.length) return;
-
-  const tilts = ['left', 'right', 'straight', 'left', 'right'];
-  grid.innerHTML = girlfriendPhotoUrls
-    .map(function (item, index) {
-      const tilt = tilts[index % tilts.length];
-      const url = typeof item === 'string' ? item : item.url;
-      const label = typeof item === 'string' ? 'Mitthi 💕' : (item.caption || 'Mitthi 💕');
-      return (
-        '<div class="scrapbookCard" data-tilt="' + tilt + '" data-caption="' + label + '">' +
-        '<div class="scrapbookCardTape"></div>' +
-        '<div class="scrapbookPhotoWrap">' +
-        '<img src="' + url + '" alt="Mitthi" loading="lazy">' +
-        '</div>' +
-        '<div class="scrapbookChin">' + label + '</div>' +
-        '</div>'
-      );
-    })
-    .join('');
-}
-populateScrapbookGrid();
 
 function initializePhotoStripZoomPreview() {
   const backdrop = document.createElement('div');
@@ -349,13 +324,11 @@ function initializePhotoStripZoomPreview() {
   let activeSourceCard = null;
 
   function dismissPreview(event) {
-    if (event) {
-      if (typeof event.stopPropagation === 'function') event.stopPropagation();
-      if (typeof event.preventDefault === 'function' && event.type === 'touchend') event.preventDefault();
+    if (event && typeof event.stopPropagation === 'function') {
+      event.stopPropagation();
     }
     backdrop.classList.remove('isVisible');
     zoomPreview.classList.remove('isVisible');
-    zoomPreview.style.transform = '';
 
     // Resume scrolling tracks smoothly
     document.querySelectorAll('.photoStripTrack').forEach(function (track) {
@@ -368,18 +341,15 @@ function initializePhotoStripZoomPreview() {
     }
   }
 
-  // Dismiss on clicking or tapping backdrop
+  // Dismiss on clicking backdrop
   backdrop.addEventListener('click', dismissPreview);
-  backdrop.addEventListener('touchend', dismissPreview);
 
-  // Dismiss on clicking or tapping anywhere on the preview card
+  // Dismiss on clicking close button or anywhere on the preview card
   zoomPreview.addEventListener('click', dismissPreview);
-  zoomPreview.addEventListener('touchend', dismissPreview);
 
   const closeBtn = zoomPreview.querySelector('#polaroidZoomCloseBtn');
   if (closeBtn) {
     closeBtn.addEventListener('click', dismissPreview);
-    closeBtn.addEventListener('touchend', dismissPreview);
   }
 
   // Close on Escape key
@@ -397,7 +367,7 @@ function initializePhotoStripZoomPreview() {
     activeSourceCard = card;
     card.classList.add('isSelectedSourcePhoto');
 
-    // Pause scrolling on both tracks so the photo remains stable & connected
+    // Pause scrolling on both tracks so the photo remains stable
     document.querySelectorAll('.photoStripTrack').forEach(function (track) {
       track.style.animationPlayState = 'paused';
     });
@@ -405,56 +375,6 @@ function initializePhotoStripZoomPreview() {
     zoomImg.src = img.src;
     const caption = card.dataset.caption || 'Mitthi 💖';
     zoomChin.textContent = caption;
-
-    const cardRect = card.getBoundingClientRect();
-    const stripEl = card.closest('.photoStrip');
-    const isMobile = window.innerWidth <= 680;
-
-    const previewWidth = isMobile ? Math.min(210, window.innerWidth - 58) : 235;
-    const previewEstimatedHeight = isMobile ? 260 : 290;
-
-    // Calculate vertical alignment with clicked photo
-    const cardCenterY = cardRect.top + cardRect.height / 2;
-    let targetTop = cardCenterY - previewEstimatedHeight / 2;
-    const minTop = 14;
-    const maxTop = window.innerHeight - previewEstimatedHeight - 14;
-    targetTop = Math.max(minTop, Math.min(maxTop, targetTop));
-
-    // Pointer notch Y position relative to preview card
-    const connectorRelativeY = Math.max(22, Math.min(previewEstimatedHeight - 22, cardCenterY - targetTop));
-    zoomPreview.style.setProperty('--connectorY', connectorRelativeY + 'px');
-
-    zoomPreview.classList.remove('connectedLeft', 'connectedRight');
-
-    if (!stripEl) {
-      // Centered preview for scrapbook grid cards
-      zoomPreview.style.left = '50%';
-      zoomPreview.style.right = 'auto';
-      zoomPreview.style.top = '50%';
-      zoomPreview.style.transform = 'translate(-50%, -50%) scale(1)';
-      zoomPreview.style.transformOrigin = 'center center';
-    } else if (stripEl.classList.contains('left')) {
-      zoomPreview.style.transform = '';
-      zoomPreview.classList.add('connectedLeft');
-      const targetLeft = isMobile ? 48 : Math.min(cardRect.right + 10, window.innerWidth - previewWidth - 14);
-      zoomPreview.style.left = targetLeft + 'px';
-      zoomPreview.style.right = 'auto';
-      zoomPreview.style.top = targetTop + 'px';
-      zoomPreview.style.transformOrigin = '0px ' + connectorRelativeY + 'px';
-    } else {
-      zoomPreview.style.transform = '';
-      zoomPreview.classList.add('connectedRight');
-      if (isMobile) {
-        zoomPreview.style.left = 'auto';
-        zoomPreview.style.right = '48px';
-      } else {
-        const targetRight = Math.min(window.innerWidth - cardRect.left + 10, window.innerWidth - previewWidth - 14);
-        zoomPreview.style.left = 'auto';
-        zoomPreview.style.right = targetRight + 'px';
-      }
-      zoomPreview.style.top = targetTop + 'px';
-      zoomPreview.style.transformOrigin = previewWidth + 'px ' + connectorRelativeY + 'px';
-    }
 
     backdrop.classList.add('isVisible');
     zoomPreview.classList.add('isVisible');
@@ -473,19 +393,7 @@ function initializePhotoStripZoomPreview() {
     });
   });
 
-  const scrapbookGrid = document.getElementById('scrapbookGrid');
-  if (scrapbookGrid) {
-    scrapbookGrid.addEventListener('click', function (clickEvent) {
-      const clickedCard = clickEvent.target.closest('.scrapbookCard');
-      if (!clickedCard) return;
-      clickEvent.stopPropagation();
-      if (activeSourceCard === clickedCard && zoomPreview.classList.contains('isVisible')) {
-        dismissPreview();
-      } else {
-        openEnlargedCard(clickedCard);
-      }
-    });
-  }
+
 }
 initializePhotoStripZoomPreview();
 
@@ -600,18 +508,19 @@ function buildBuntingBanner() {
 
   const letters = bannerText.split('').filter(function (character) { return character !== ' '; });
   const totalLetters = letters.length;
-  const curveDipAmount = 16; // px — how far the middle of the banner sags below the ends
+  const curveDipAmount = 10; // px — subtle festive sag so flags don't collide with cards
 
   const stringSvg = document.createElement('div');
   stringSvg.style.position = 'absolute';
-  stringSvg.style.top = '-14px';
-  stringSvg.style.left = '-14px';
-  stringSvg.style.right = '-14px';
-  stringSvg.style.height = '30px';
+  stringSvg.style.top = '-10px';
+  stringSvg.style.left = '-8px';
+  stringSvg.style.right = '-8px';
+  stringSvg.style.height = '24px';
   stringSvg.style.zIndex = '-1';
+  stringSvg.style.pointerEvents = 'none';
   stringSvg.innerHTML =
-    '<svg viewBox="0 0 100 30" preserveAspectRatio="none" style="width:100%; height:100%;">' +
-    '<path d="M0 8 Q50 26 100 8" stroke="#2b2420" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
+    '<svg viewBox="0 0 100 24" preserveAspectRatio="none" style="width:100%; height:100%; display:block;">' +
+    '<path d="M0 6 Q50 18 100 6" stroke="#2b2420" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
     '</svg>';
   buntingContainer.appendChild(stringSvg);
 
@@ -619,7 +528,7 @@ function buildBuntingBanner() {
   bannerText.split('').forEach(function (character) {
     if (character === ' ') {
       const spacer = document.createElement('div');
-      spacer.style.width = '10px';
+      spacer.className = 'buntingSpacer';
       buntingContainer.appendChild(spacer);
       return;
     }
@@ -628,13 +537,13 @@ function buildBuntingBanner() {
 
     const flagWrap = document.createElement('div');
     flagWrap.className = 'buntingFlagWrap';
-    flagWrap.style.transform = 'translateY(' + verticalOffset + 'px)';
+    flagWrap.style.transform = 'translateY(' + verticalOffset.toFixed(1) + 'px)';
 
     const flag = document.createElement('div');
     flag.className = 'buntingFlag';
     flag.textContent = character;
     flag.style.background = flagColors[letterIndex % flagColors.length];
-    flag.style.animationDelay = (letterIndex * 0.08) + 's, ' + (letterIndex * 0.15) + 's';
+    flag.style.animationDelay = (letterIndex * 0.05) + 's, ' + (letterIndex * 0.12) + 's';
 
     flagWrap.appendChild(flag);
     buntingContainer.appendChild(flagWrap);
