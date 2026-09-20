@@ -1865,10 +1865,11 @@ let voiceNoteIsPlaying = false;
 function initVoiceNoteAudio() {
   const audioElement = document.getElementById('voiceNoteAudioElement');
   const durationEl = document.getElementById('cassetteDuration');
-  if (!audioElement || !voiceNoteAudioUrl) return;
+  const targetAudioSrc = (audioElement && audioElement.getAttribute('src')) || voiceNoteAudioUrl || 'assets/audio/bdy_mitthii.mp3';
+  if (!audioElement || !targetAudioSrc) return;
 
   if (!audioElement.src || !audioElement.src.includes('bdy_mitthii')) {
-    audioElement.src = voiceNoteAudioUrl;
+    audioElement.src = targetAudioSrc;
     audioElement.preload = 'metadata';
   }
 
@@ -1911,8 +1912,9 @@ function toggleVoiceNotePlayback() {
   const playIcon = document.getElementById('cassettePlayIcon');
   const playText = document.getElementById('cassettePlayText');
   const audioElement = document.getElementById('voiceNoteAudioElement');
+  const targetAudioSrc = (audioElement && audioElement.getAttribute('src')) || voiceNoteAudioUrl || 'assets/audio/bdy_mitthii.mp3';
 
-  if (!voiceNoteAudioUrl) {
+  if (!targetAudioSrc) {
     const bubble = document.createElement('div');
     bubble.className = 'floatingElementReactionBubble';
     bubble.textContent = "Abhishek's voice note will play here once added! 🎙️💕";
@@ -1923,8 +1925,8 @@ function toggleVoiceNotePlayback() {
     return;
   }
 
-  if (!audioElement.src || !audioElement.src.includes('bdy_mitthii')) {
-    initVoiceNoteAudio();
+  if (audioElement && (!audioElement.src || !audioElement.src.includes('bdy_mitthii'))) {
+    audioElement.src = targetAudioSrc;
   }
 
   voiceNoteIsPlaying = !voiceNoteIsPlaying;
