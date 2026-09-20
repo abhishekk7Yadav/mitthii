@@ -9,8 +9,36 @@ const vintageSpeakerAudioTrackUrl = ""; // e.g. "happy-birthday-instrumental.mp3
 const voiceNoteAudioUrl = ""; // e.g. "voice-note.mp3" (optional: place your voice recording here!)
 
 const girlfriendPhotoUrls = [
-  // add real photo URLs or local file paths here, e.g. "photos/1.jpg"
-  // or with custom captions: { url: "photos/1.jpg", caption: "our first date ☕" }
+  { url: "assets/images/mitthii/IMG-20260829-WA0001.webp", caption: "Mitthi 💕" },
+  { url: "assets/images/mitthii/IMG-20260829-WA0003.webp", caption: "That precious smile ✨" },
+  { url: "assets/images/mitthii/IMG-20260904-WA0000.webp", caption: "My favourite human 🥺" },
+  { url: "assets/images/mitthii/IMG-20260904-WA0001.webp", caption: "Cutest ever 🌸" },
+  { url: "assets/images/mitthii/IMG-20260916-WA0008.webp", caption: "Pure sunshine ☀️" },
+  { url: "assets/images/mitthii/IMG-20260920-WA0000.webp", caption: "Tum aur tumhari hasi 🥰" },
+  { url: "assets/images/mitthii/IMG-20260920-WA0002.webp", caption: "My safe space 🤍" },
+  { url: "assets/images/mitthii/IMG-20260920-WA0003.webp", caption: "Always glowing ⭐" },
+  { url: "assets/images/mitthii/IMG_20260822_211425676.webp", caption: "Sweetest moments 💖" },
+  { url: "assets/images/mitthii/IMG_20260822_211447801.webp", caption: "Bachhuuu 🫶🏻" },
+  { url: "assets/images/mitthii/Screenshot_20260918-022317.webp", caption: "Unfiltered cuteness 🌷" },
+  { url: "assets/images/mitthii/Screenshot_20260918-022341.webp", caption: "My happy place 🌹" },
+  { url: "assets/images/mitthii/Screenshot_20260919-204225.webp", caption: "Cutie pie 🎀" },
+  { url: "assets/images/mitthii/Screenshot_20260919-204252.webp", caption: "Special moments ✨" },
+  { url: "assets/images/mitthii/Screenshot_20260919-204315.webp", caption: "Adore you endlessly 💕" },
+  { url: "assets/images/mitthii/Screenshot_20260919-231501.webp", caption: "Forever us 🤍" },
+  { url: "assets/images/mitthii/Screenshot_20260919-235033.webp", caption: "Khubsoorat Mitthi 🌸" },
+  { url: "assets/images/mitthii/Screenshot_20260919-235057.webp", caption: "Most special soul 💫" },
+  { url: "assets/images/mitthii/Screenshot_20260919-235119.webp", caption: "Little bundle of joy 🥺" },
+  { url: "assets/images/mitthii/Screenshot_20260920-001807.webp", caption: "My heart's smile 💖" },
+  { url: "assets/images/mitthii/Screenshot_20260920-001854.webp", caption: "Pure happiness 🌷" },
+  { url: "assets/images/mitthii/Snapchat-1336062239.webp", caption: "Precious memories 📸" },
+  { url: "assets/images/mitthii/Snapchat-1533353950.webp", caption: "Tamatar 🍅💕" },
+  { url: "assets/images/mitthii/Snapchat-1536617511.webp", caption: "Making days sweeter 🍯" },
+  { url: "assets/images/mitthii/Snapchat-295471224.webp", caption: "Queen of my heart 👑" },
+  { url: "assets/images/mitthii/Snapchat-661622006.webp", caption: "My favorite view 🌅" },
+  { url: "assets/images/mitthii/Snapchat-754097370.webp", caption: "Cutest laughter 🥰" },
+  { url: "assets/images/mitthii/Snapchat-966268683.webp", caption: "Always by your side 🤍" },
+  { url: "assets/images/mitthii/WhatsApp_Image_2026-09-19_at_23.40.23.webp", caption: "Meri Mitthi ❤️" },
+  { url: "assets/images/mitthii/WhatsApp_Image_2026-09-19_at_23.40.29.webp", caption: "Happy Birthday Love 🎂✨" }
 ];
 
 const birthdayMessageText =
@@ -271,6 +299,33 @@ function fillPhotoStripWithPlaceholders(trackElement, side) {
 fillPhotoStripWithPlaceholders(document.getElementById('leftPhotoStripTrack'), 'left');
 fillPhotoStripWithPlaceholders(document.getElementById('rightPhotoStripTrack'), 'right');
 
+/* ============================================================
+   Scrapbook Grid: All 30 photo moments
+   ============================================================ */
+function populateScrapbookGrid() {
+  const grid = document.getElementById('scrapbookGrid');
+  if (!grid || !girlfriendPhotoUrls.length) return;
+
+  const tilts = ['left', 'right', 'straight', 'left', 'right'];
+  grid.innerHTML = girlfriendPhotoUrls
+    .map(function (item, index) {
+      const tilt = tilts[index % tilts.length];
+      const url = typeof item === 'string' ? item : item.url;
+      const label = typeof item === 'string' ? 'Mitthi 💕' : (item.caption || 'Mitthi 💕');
+      return (
+        '<div class="scrapbookCard" data-tilt="' + tilt + '" data-caption="' + label + '">' +
+        '<div class="scrapbookCardTape"></div>' +
+        '<div class="scrapbookPhotoWrap">' +
+        '<img src="' + url + '" alt="Mitthi" loading="lazy">' +
+        '</div>' +
+        '<div class="scrapbookChin">' + label + '</div>' +
+        '</div>'
+      );
+    })
+    .join('');
+}
+populateScrapbookGrid();
+
 function initializePhotoStripZoomPreview() {
   const backdrop = document.createElement('div');
   backdrop.className = 'photoZoomBackdrop';
@@ -300,6 +355,7 @@ function initializePhotoStripZoomPreview() {
     }
     backdrop.classList.remove('isVisible');
     zoomPreview.classList.remove('isVisible');
+    zoomPreview.style.transform = '';
 
     // Resume scrolling tracks smoothly
     document.querySelectorAll('.photoStripTrack').forEach(function (track) {
@@ -351,7 +407,7 @@ function initializePhotoStripZoomPreview() {
     zoomChin.textContent = caption;
 
     const cardRect = card.getBoundingClientRect();
-    const isLeft = card.closest('.photoStrip') && card.closest('.photoStrip').classList.contains('left');
+    const stripEl = card.closest('.photoStrip');
     const isMobile = window.innerWidth <= 680;
 
     const previewWidth = isMobile ? Math.min(210, window.innerWidth - 58) : 235;
@@ -370,7 +426,15 @@ function initializePhotoStripZoomPreview() {
 
     zoomPreview.classList.remove('connectedLeft', 'connectedRight');
 
-    if (isLeft) {
+    if (!stripEl) {
+      // Centered preview for scrapbook grid cards
+      zoomPreview.style.left = '50%';
+      zoomPreview.style.right = 'auto';
+      zoomPreview.style.top = '50%';
+      zoomPreview.style.transform = 'translate(-50%, -50%) scale(1)';
+      zoomPreview.style.transformOrigin = 'center center';
+    } else if (stripEl.classList.contains('left')) {
+      zoomPreview.style.transform = '';
       zoomPreview.classList.add('connectedLeft');
       const targetLeft = isMobile ? 48 : Math.min(cardRect.right + 10, window.innerWidth - previewWidth - 14);
       zoomPreview.style.left = targetLeft + 'px';
@@ -378,6 +442,7 @@ function initializePhotoStripZoomPreview() {
       zoomPreview.style.top = targetTop + 'px';
       zoomPreview.style.transformOrigin = '0px ' + connectorRelativeY + 'px';
     } else {
+      zoomPreview.style.transform = '';
       zoomPreview.classList.add('connectedRight');
       if (isMobile) {
         zoomPreview.style.left = 'auto';
@@ -407,6 +472,20 @@ function initializePhotoStripZoomPreview() {
       }
     });
   });
+
+  const scrapbookGrid = document.getElementById('scrapbookGrid');
+  if (scrapbookGrid) {
+    scrapbookGrid.addEventListener('click', function (clickEvent) {
+      const clickedCard = clickEvent.target.closest('.scrapbookCard');
+      if (!clickedCard) return;
+      clickEvent.stopPropagation();
+      if (activeSourceCard === clickedCard && zoomPreview.classList.contains('isVisible')) {
+        dismissPreview();
+      } else {
+        openEnlargedCard(clickedCard);
+      }
+    });
+  }
 }
 initializePhotoStripZoomPreview();
 
@@ -1577,6 +1656,8 @@ function beginFinalMessageSequence() {
     document.getElementById('signatureLine').classList.add('isVisible');
     const stickySection = document.getElementById('stickyNotesSection');
     if (stickySection) stickySection.classList.add('isVisible');
+    const scrapbookSection = document.getElementById('scrapbookSection');
+    if (scrapbookSection) scrapbookSection.classList.add('isVisible');
     const cassettePlayer = document.getElementById('retroCassettePlayer');
     if (cassettePlayer) cassettePlayer.classList.add('isVisible');
     document.getElementById('replayExperienceButton').classList.add('isVisible');
@@ -1605,6 +1686,9 @@ function handleReplayClick() {
   const stickySection = document.getElementById('stickyNotesSection');
   if (stickySection) stickySection.classList.remove('isVisible');
   resetStickyNotesDeck();
+
+  const scrapbookSection = document.getElementById('scrapbookSection');
+  if (scrapbookSection) scrapbookSection.classList.remove('isVisible');
 
   const cassettePlayer = document.getElementById('retroCassettePlayer');
   if (cassettePlayer) {
