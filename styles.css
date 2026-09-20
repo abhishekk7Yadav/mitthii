@@ -53,9 +53,9 @@ body {
   background: #FFFCF9;
   border: 2px solid var(--color-ink);
   border-radius: 8px;
-  padding: 40px 30px;
-  max-width: min(440px, calc(100vw - 160px));
-  width: calc(100% - 160px);
+  padding: 38px 28px;
+  max-width: 480px;
+  width: min(92%, 480px);
   margin-left: auto;
   margin-right: auto;
   box-shadow: 8px 8px 0 rgba(95, 42, 58, 0.16);
@@ -287,7 +287,7 @@ body {
   bottom: 0;
   width: 66px;
   overflow: hidden;
-  z-index: 10;
+  z-index: 5;
   opacity: 0;
   contain: layout style paint;
   transform: translate3d(0, 0, 0);
@@ -1225,12 +1225,13 @@ body {
 }
 
 .birthdayCakeCard {
-  padding-top: 52px;
-  max-width: 380px;
+  padding: 40px 30px 28px;
+  max-width: 440px;
 }
 
 .birthdayCakeCard h2 {
-  margin-bottom: 10px;
+  font-size: 2.3rem;
+  margin-bottom: 8px;
 }
 
 .cakeAssembly {
@@ -2405,11 +2406,11 @@ body {
     padding: 12px 6px;
   }
 
-  /* 1. Side photo strips on mobile: ultra slim, floating on left and right borders */
+  /* 1. Side photo strips on mobile: slim, elegant, floating on left and right borders */
   .photoStrip {
     display: block !important;
-    width: 38px !important;
-    z-index: 10 !important;
+    width: 44px !important;
+    z-index: 5 !important;
     opacity: 0;
     pointer-events: auto !important;
   }
@@ -2429,7 +2430,7 @@ body {
 
   .photoStripTrack {
     padding: 6px 1px !important;
-    gap: 12px !important;
+    gap: 14px !important;
   }
 
   .photoStrip.left .photoStripTrack {
@@ -2441,7 +2442,7 @@ body {
   }
 
   .polaroidCard {
-    width: 32px !important;
+    width: 38px !important;
     padding: 3px 2px 5px 2px !important;
     border-radius: 2px !important;
     box-shadow: 0 2px 5px rgba(50, 30, 40, 0.22) !important;
@@ -2492,29 +2493,29 @@ body {
     display: none !important;
   }
 
-  /* 3. Center Paper Cards — placed strictly between side strips, z-index 35 */
+  /* 3. Center Paper Cards — full sized, generous & comfortable */
   .paperCard {
-    width: calc(100% - 84px) !important;
-    max-width: 320px !important;
-    padding: 20px 14px 16px !important;
+    width: min(92%, 460px) !important;
+    max-width: 460px !important;
+    padding: 30px 22px 24px !important;
     margin-left: auto !important;
     margin-right: auto !important;
     border-radius: 12px !important;
     box-shadow: 4px 4px 0 rgba(95, 42, 58, 0.15) !important;
-    z-index: 35 !important;
+    z-index: 30 !important;
   }
 
   .paperCard h1 {
-    font-size: 1.85rem;
-  }
-
-  .greetingTitle {
     font-size: 2.15rem !important;
   }
 
+  .greetingTitle {
+    font-size: 2.5rem !important;
+  }
+
   .greetingSubtext {
-    font-size: 0.92rem;
-    margin-top: 6px;
+    font-size: 1rem !important;
+    margin-top: 8px;
   }
 
   /* 4. Room Balloons on Mobile: scaled & non-intrusive in background */
@@ -2554,19 +2555,19 @@ body {
   }
 
   #sceneRoomDecoration {
-    padding-top: 46px !important;
+    padding-top: 42px !important;
     padding-bottom: 12px !important;
     justify-content: flex-start !important;
     overflow-y: hidden !important;
   }
 
   .roomDecorationStatusCard {
-    width: calc(100% - 84px) !important;
-    max-width: 310px !important;
-    margin-top: 48px !important;
+    width: min(92%, 420px) !important;
+    max-width: 420px !important;
+    margin-top: 40px !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 35 !important;
+    z-index: 30 !important;
   }
 
   /* Bunting Banner "HAPPY BIRTHDAY" on mobile: sized 100% between side photos, above cards */
@@ -2629,127 +2630,127 @@ body {
     top: 14% !important;
   }
 
-  /* 7. Birthday Cake Card on mobile */
+  /* 7. Birthday Cake Card on mobile — Full size, glorious & un-shrunk */
   .birthdayCakeCard {
-    width: calc(100% - 84px) !important;
-    max-width: 310px !important;
-    padding: 12px 10px 12px !important;
-    margin-top: 44px !important;
+    width: min(92%, 420px) !important;
+    max-width: 420px !important;
+    padding: 28px 20px 22px !important;
+    margin-top: 38px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 35 !important;
+    z-index: 30 !important;
   }
 
   .birthdayCakeCard h2 {
-    font-size: 1.85rem;
-    margin-bottom: 2px;
+    font-size: 2.15rem !important;
+    margin-bottom: 6px !important;
   }
 
   .cakeAssembly {
-    transform: scale(0.74);
-    margin: 2px auto;
+    transform: scale(1) !important; /* Full size celebration cake */
+    margin: 18px auto 14px !important;
   }
 
   .candleBlowMicHint {
-    font-size: 0.74rem;
-    padding: 3px 8px;
-    margin: 4px auto;
+    font-size: 0.82rem !important;
+    padding: 3px 10px !important;
+    margin: 6px auto !important;
   }
 
   #blowCandleButton {
-    padding: 8px 18px;
-    font-size: 0.84rem;
-    margin-top: 4px;
+    padding: 11px 26px !important;
+    font-size: 0.95rem !important;
+    margin-top: 6px !important;
   }
 
   /* 7.5. Vintage Love Letter Envelope on mobile */
   .vintageEnvelopeContainer {
-    width: calc(100% - 84px) !important;
-    max-width: 290px !important;
-    margin-top: 44px !important;
+    width: min(92%, 360px) !important;
+    max-width: 360px !important;
+    margin-top: 38px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    z-index: 35 !important;
+    z-index: 30 !important;
   }
 
   .envelopeWrap {
-    height: 180px;
+    height: 210px !important;
   }
 
   .envelopeFlap {
-    height: 90px;
+    height: 105px !important;
   }
 
   .envelopeSealHeart {
-    width: 32px;
-    height: 32px;
-    font-size: 0.95rem;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 1rem !important;
   }
 
   .envelopeLetterPeek {
-    height: 150px;
+    height: 170px !important;
   }
 
   .vintageEnvelopeContainer.isOpen .envelopeLetterPeek {
-    transform: translateY(-70px);
+    transform: translateY(-80px) !important;
   }
 
   .envelopeToText {
-    font-size: 1.4rem;
+    font-size: 1.55rem !important;
   }
 
   .envelopeFromText {
-    font-size: 0.72rem;
+    font-size: 0.78rem !important;
   }
 
   .envelopeTapPrompt {
-    font-size: 0.76rem;
-    padding: 3px 10px;
-    margin-top: 5px;
+    font-size: 0.82rem !important;
+    padding: 4px 12px !important;
+    margin-top: 6px !important;
   }
 
-  /* 8. Vintage Love Letter Card on mobile */
+  /* 8. Vintage Love Letter Card on mobile — Full size, spacious & authentic */
   #finalMessageCard {
-    width: calc(100% - 84px) !important;
-    max-width: 325px !important;
-    max-height: calc(100dvh - 66px) !important;
-    padding: 16px 12px 16px !important;
-    margin-top: 44px !important;
+    width: min(94%, 520px) !important;
+    max-width: 520px !important;
+    max-height: calc(100dvh - 54px) !important;
+    padding: 28px 22px 24px !important;
+    margin-top: 38px !important;
     margin-bottom: auto !important;
     margin-left: auto !important;
     margin-right: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    z-index: 35 !important;
+    z-index: 30 !important;
   }
 
   .vintageLetterTitle {
-    font-size: 1.82rem;
+    font-size: 2.15rem !important;
     margin-top: 4px;
-    margin-bottom: 2px;
-    line-height: 1.15;
+    margin-bottom: 4px;
+    line-height: 1.2;
   }
 
   #finalMessageCard .daysCounterBadge {
-    font-size: 0.74rem;
-    padding: 3px 8px;
-    margin: 4px auto 8px;
+    font-size: 0.84rem !important;
+    padding: 4px 10px !important;
+    margin: 6px auto 10px !important;
   }
 
   #finalMessageCard .daysCounterNumber {
-    font-size: 0.88rem;
+    font-size: 1.05rem !important;
   }
 
   #finalMessageCard .birthdayMessageTextContainer {
-    font-size: 1.18rem;
-    line-height: 1.58;
-    margin-top: 10px;
+    font-size: 1.30rem !important;
+    line-height: 1.70 !important;
+    margin-top: 14px !important;
   }
 
   #finalMessageCard .signatureLine {
-    font-size: 1.95rem;
-    margin-top: 12px;
+    font-size: 2.35rem !important;
+    margin-top: 18px !important;
   }
 
   /* 9. Hide floating emojis around letter on mobile to prevent clutter */
@@ -2760,102 +2761,72 @@ body {
 
   /* 10. Sticky Notes Deck on mobile */
   .stickyNotesSection {
-    margin-top: 16px;
-    margin-bottom: 12px;
+    margin-top: 18px;
+    margin-bottom: 14px;
   }
 
   .stickyNotesHeader {
-    font-size: 1.25rem;
+    font-size: 1.30rem;
     margin-bottom: 8px;
   }
 
   .stickyNotesDeck {
     width: 100%;
-    max-width: 260px;
+    max-width: 310px;
   }
 
   .stickyNoteCard {
-    padding: 14px 12px 10px;
-    min-height: 110px;
+    padding: 16px 14px 12px;
+    min-height: 115px;
   }
 
   .stickyNoteText {
-    font-size: 0.88rem;
-    line-height: 1.45;
-    margin: 6px 0 8px;
+    font-size: 0.98rem;
+    line-height: 1.50;
+    margin: 8px 0 10px;
   }
 
   .stickyNoteTapPrompt {
-    font-size: 0.86rem;
-  }
-
-  /* 10.5. Scrapbook grid on mobile */
-  .scrapbookSection {
-    margin-top: 18px;
-    margin-bottom: 16px;
-  }
-
-  .scrapbookHeadingTitle {
-    font-size: 1.35rem;
-  }
-
-  .scrapbookHeadingSubtitle {
-    font-size: 0.76rem;
-  }
-
-  .scrapbookGrid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    max-width: 320px;
-  }
-
-  .scrapbookCard {
-    padding: 4px 4px 8px 4px;
-    touch-action: manipulation;
-  }
-
-  .scrapbookChin {
-    font-size: 0.8rem;
-    margin-top: 4px;
+    font-size: 0.88rem;
   }
 
   /* 11. Cassette player on mobile */
   .retroCassettePlayer {
     width: 100%;
-    max-width: 265px;
-    margin: 14px auto 8px;
-    padding: 8px 10px;
+    max-width: 290px;
+    margin: 16px auto 10px;
+    padding: 8px 12px;
   }
 
   .cassetteHeader {
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     margin-bottom: 4px;
   }
 
   .cassetteBody {
-    height: 48px;
+    height: 52px;
     padding: 3px 8px;
   }
 
   .cassettePlayButton {
-    padding: 6px 14px;
-    font-size: 0.8rem;
+    padding: 7px 16px;
+    font-size: 0.84rem;
     margin-top: 6px;
   }
 
   /* 12. Replay button */
   .replayExperienceButton {
-    margin-top: 10px;
-    padding: 6px 16px;
-    font-size: 0.78rem;
+    margin-top: 12px;
+    padding: 8px 20px;
+    font-size: 0.84rem;
   }
 
   /* 13. Enlarged Photo Preview on mobile — centered gracefully */
   .photoZoomPreview {
     z-index: 10000 !important;
-    width: min(84vw, 280px) !important;
-    max-width: 290px !important;
-    padding: 8px 8px 18px 8px !important;
+    width: min(84vw, 290px) !important;
+    max-width: 300px !important;
+    padding: 10px 10px 20px 10px !important;
     touch-action: manipulation !important;
   }
 
